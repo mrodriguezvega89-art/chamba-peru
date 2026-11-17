@@ -45,7 +45,58 @@ PUBLIC_ENDPOINTS = [
     ("MINISTERIOS", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-MINISTERIOS-DEL-ESTADO-1.html"),
     ("ORGANISMOS REGULADORES", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-organismos-reguladores-estado-27.html"),
     ("HOSPITALES", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-HOSPITALES-PUBLICOS-PRIVADOS-3.html"),
-    ("UNIVERSIDADES", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-universidades-publicas-estado-9.html")
+    ("UNIVERSIDADES", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-universidades-publicas-estado-9.html"),
+    # Carreras Profesionales de Ingeniería y Ciencias Agrarias
+    ("ING_AGRICOLA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ingenieria-agricola-135.html"),
+    ("AGRONOMIA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-AGRONOMIA-50.html"),
+    ("ING_AGROINDUSTRIAL", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-AGROINDUSTRIAL-93.html"),
+    ("AGRONEGOCIOS", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ingenieria-en-agronegocios-132.html"),
+    ("ING_INDUSTRIAL", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-INDUSTRIAL-15.html"),
+    ("ING_INDUSTRIAL-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-INDUSTRIAL-15.html?page=2"),
+    ("ING_SISTEMAS", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-DE-SISTEMAS-18.html"),
+    ("ING_SISTEMAS-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-DE-SISTEMAS-18.html?page=2"),
+    ("ING_SOFTWARE", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-DE-SOFTWARE-115.html"),
+    ("COMPUTACION_INFORMATICA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-COMPUTACION-E-INFORMATICA-17.html"),
+    ("COMPUTACION_INFORMATICA-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-COMPUTACION-E-INFORMATICA-17.html?page=2"),
+    ("ING_CIVIL", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-CIVIL-21.html"),
+    ("ING_CIVIL-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-CIVIL-21.html?page=2"),
+    ("TOPOGRAFIA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-TOPOGRAFIA-143.html"),
+    ("ARQUITECTURA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ARQUITECTURA-28.html"),
+    ("ING_ELECTRICA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-ELECTRICA-111.html"),
+    ("ING_ELECTRONICA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ELECTRONICA-29.html"),
+    ("ING_MECANICA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-MECANICA-110.html"),
+    ("ING_MECATRONICA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-MECATRONICA-130.html"),
+    ("ING_MINAS", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-MINAS-70.html"),
+    ("ING_GEOLOGICA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-GEOLOGICA-120.html"),
+    ("ING_QUIMICA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-QUIMICA-113.html"),
+    ("ING_AMBIENTAL", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-AMBIENTAL-49.html"),
+    ("ING_SANITARIA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-SANITARIA-112.html"),
+    ("ING_FORESTAL", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-INGENIERIA-FORESTAL-68.html"),
+    ("ING_SEGURIDAD_SSOMA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ingenieria-de-seguridad-y-salud-en-el-trabajo-137.html"),
+    # Técnicos de Instituto (Senati, Sencico, etc.)
+    ("TECNICOS_TITULADOS", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-para-PERSONAS-CON-TITULO-TECNICO-83.html"),
+    ("TECNICOS_TITULADOS-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-para-PERSONAS-CON-TITULO-TECNICO-83.html?page=2"),
+    ("TECNICOS_EGRESADOS", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-para-EGRESADOS-TECNICOS-74.html"),
+    ("TECNICOS_EGRESADOS-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-para-EGRESADOS-TECNICOS-74.html?page=2"),
+    ("TECNICOS_ESTUDIANTES", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-para-ESTUDIANTES-TECNICOS-76.html"),
+    # Carreras de Gestión, Salud y Leyes
+    ("ADMINISTRACION", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ADMINISTRACION-1.html"),
+    ("ADMINISTRACION-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ADMINISTRACION-1.html?page=2"),
+    ("CONTABILIDAD", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-CONTABILIDAD-2.html"),
+    ("CONTABILIDAD-P2", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-CONTABILIDAD-2.html?page=2"),
+    ("DERECHO", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-DERECHO-3.html"),
+    ("ECONOMIA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ECONOMIA-4.html"),
+    ("ENFERMERIA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-ENFERMERIA-7.html"),
+    ("MEDICINA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-MEDICINA-HUMANA-8.html"),
+    ("FARMACIA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-FARMACIA-Y-BIOQUIMICA-34.html"),
+    ("PSICOLOGIA", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-PSICOLOGIA-9.html"),
+    ("EDUCACION", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-EDUCACION-6.html"),
+    ("COMUNICACION", "https://www.convocatoriasdetrabajo.com/ofertas-de-empleo-en-CIENCIAS-DE-LA-COMUNICACION-12.html"),
+    # Entidades Agrarias del Estado
+    ("AGRO_RURAL", "https://www.convocatoriasdetrabajo.com/empleos-PROGRAMA-DE-DESARROLLO-PRODUCTIVO-AGRARIO-RURAL-AGRO-RURAL-146.html"),
+    ("AGROBANCO", "https://www.convocatoriasdetrabajo.com/empleos-BANCO-AGROPECUARIO-AGROBANCO-622.html"),
+    ("AGROIDEAS", "https://www.convocatoriasdetrabajo.com/empleos-PROGRAMA-DE-COMPENSACIONES-PARA-LA-COMPETITIVIDAD-AGROIDEAS-151.html"),
+    ("DRA_PIURA", "https://www.convocatoriasdetrabajo.com/empleos-DIRECCION-REGIONAL-DE-AGRICULTURA-PIURA-AGRO-PIURA-132.html")
 ]
 
 def fetch_html(url, timeout=10):
@@ -174,6 +225,62 @@ def parse_convocatoria_articles(html, default_company="Sector Público"):
         tags = ["Perú", "Sector Público", contract_type, location]
         if conv_code:
             tags.append(conv_code)
+
+        # Enriquecimiento inteligente con Programas y Software requeridos en Perú
+        text_lower = f"{exact_title} {desc}".lower()
+        tools_detected = []
+        software_keywords = [
+            ("autocad", "AutoCAD"),
+            ("civil 3d", "Civil 3D"),
+            ("civil3d", "Civil 3D"),
+            ("revit", "Revit"),
+            ("bim", "BIM"),
+            ("s10", "S10 Presupuestos"),
+            ("primavera p6", "Primavera P6"),
+            ("primavera", "Primavera P6"),
+            ("sap2000", "SAP2000"),
+            ("etabs", "ETABS"),
+            ("arcgis", "ArcGIS"),
+            ("qgis", "QGIS"),
+            ("watercad", "WaterCAD"),
+            ("power bi", "Power BI"),
+            ("excel", "Excel Avanzado"),
+            ("python", "Python"),
+            ("sql", "SQL"),
+            ("sap", "SAP ERP"),
+            ("solidworks", "SolidWorks"),
+            ("concar", "CONCAR"),
+            ("siscont", "SISCONT")
+        ]
+        for kw, tool_name in software_keywords:
+            if kw in text_lower and tool_name not in tools_detected:
+                tools_detected.append(tool_name)
+
+        # Si el puesto está relacionado a ramas clave de ingeniería/técnicos, asociar software estándar si no está
+        if any(k in text_lower for k in ["agricola", "agrícola", "riego", "cuenca"]):
+            for t in ["AutoCAD", "Civil 3D", "ArcGIS"]:
+                if t not in tools_detected:
+                    tools_detected.append(t)
+        elif any(k in text_lower for k in ["civil", "vial", "caminos", "carretera", "topograf"]):
+            for t in ["AutoCAD", "Civil 3D", "S10 Presupuestos"]:
+                if t not in tools_detected:
+                    tools_detected.append(t)
+        elif any(k in text_lower for k in ["sistemas", "software", "computacion", "informática", "programador", "desarrollador"]):
+            for t in ["SQL", "Python", "Git"]:
+                if t not in tools_detected:
+                    tools_detected.append(t)
+        elif any(k in text_lower for k in ["industrial", "procesos", "calidad", "ssoma", "logistica"]):
+            for t in ["Excel Avanzado", "Power BI", "SAP ERP"]:
+                if t not in tools_detected:
+                    tools_detected.append(t)
+        elif any(k in text_lower for k in ["contab", "tributar", "auditor"]):
+            for t in ["CONCAR", "Excel Avanzado", "Sunat"]:
+                if t not in tools_detected:
+                    tools_detected.append(t)
+
+        for t in tools_detected:
+            if t not in tags:
+                tags.append(t)
 
         jobs.append({
             "id": job_id,

@@ -41,6 +41,54 @@ const normalize = (str) => {
     .trim();
 };
 
+// Diccionario semántico de sinónimos, programas técnicos y equivalencias para Perú
+const SYNONYM_MAP = {
+  'autocad': ['autocad', 'cad', 'autodesk', 'planos', 'dibujante', 'proyectista', 'cadista', 'civil 3d', 'revit'],
+  'cad': ['autocad', 'cad', 'dibujante', 'planos'],
+  'civil3d': ['civil 3d', 'civil3d', 'autocad civil 3d', 'topografia', 'vial', 'carreteras', 'rasantes'],
+  'civil 3d': ['civil 3d', 'civil3d', 'autocad civil 3d', 'topografia', 'vial', 'carreteras'],
+  'revit': ['revit', 'bim', 'navisworks', 'modelado bim', 'autodesk revit'],
+  'bim': ['bim', 'revit', 'navisworks', 'modelador bim'],
+  's10': ['s10', 'costos y presupuestos', 'presupuesto', 'metrados', 'valorizaciones', 'precios unitarios'],
+  'primavera': ['primavera', 'primavera p6', 'cronograma', 'curva s', 'planificador'],
+  'p6': ['primavera', 'primavera p6', 'planificador'],
+  'sap2000': ['sap2000', 'etabs', 'estructuras', 'estructural'],
+  'etabs': ['etabs', 'sap2000', 'estructural'],
+  'arcgis': ['arcgis', 'qgis', 'gis', 'georreferenciacion', 'cuencas'],
+  'qgis': ['qgis', 'arcgis', 'gis'],
+  'watercad': ['watercad', 'epanet', 'riego', 'hidraulica', 'hidraulico'],
+  'powerbi': ['power bi', 'powerbi', 'dax', 'dashboard', 'business intelligence'],
+  'power bi': ['power bi', 'powerbi', 'dax'],
+  'sap': ['sap', 'sap erp', 'sap r3', 'sap s4hana', 'sap fi', 'sap mm', 'sap pm', 'sap pp'],
+  'solidworks': ['solidworks', 'diseño mecanico', 'inventor'],
+  'concar': ['concar', 'siscont', 'contabilidad', 'tributacion', 'sunat', 'asistente contable'],
+  'agricola': ['agricola', 'agrícola', 'agronomo', 'agrónomo', 'agronomia', 'agroindustrial', 'riego', 'fundo', 'cultivo', 'cosecha', 'fertirriego', 'senasa', 'midagri', 'camposol', 'danper', 'viru'],
+  'agronomo': ['agronomo', 'agrónomo', 'agricola', 'agrícola', 'agronomia', 'agroindustrial', 'sanidad vegetal', 'plagas', 'fundo', 'cosecha'],
+  'sistemas': ['sistemas', 'software', 'computacion', 'informatica', 'programador', 'desarrollador', 'developer', 'ti', 'backend', 'frontend', 'fullstack', 'analista de sistemas'],
+  'industrial': ['industrial', 'procesos', 'mejora continua', 'lean', 'calidad', 'ssoma', 'seguridad industrial', 'produccion', 'operaciones', 'logistica', 'planta'],
+  'civil': ['civil', 'construccion', 'obras', 'estructuras', 'vial', 'puentes', 'edificaciones', 'topografia', 'residente'],
+  'mecanico': ['mecanico', 'mantenimiento', 'maquinaria', 'motores', 'diesel', 'ferreyros', 'caterpillar', 'komatsu', 'senati'],
+  'electricista': ['electricista', 'electrotecnia', 'tableros', 'subestaciones', 'plc', 'variadores', 'senati'],
+  'topografo': ['topografo', 'topografia', 'estacion total', 'nivel', 'civil 3d', 'gps diferencial', 'sencico'],
+  'senati': ['senati', 'tecnico', 'tecsup', 'egresado tecnico', 'mecanico', 'electricista', 'soldador'],
+  'sencico': ['sencico', 'topografia', 'edificaciones', 'laboratorio de suelos', 'construccion civil']
+};
+
+const SOFTWARE_LIST = [
+  { id: 'ALL', label: 'Todos los Programas', icon: '✨' },
+  { id: 'AutoCAD', label: 'AutoCAD', icon: '📐' },
+  { id: 'Civil 3D', label: 'Civil 3D', icon: '🛣️' },
+  { id: 'Revit', label: 'Revit / BIM', icon: '🏢' },
+  { id: 'S10', label: 'S10 Presupuestos', icon: '💰' },
+  { id: 'Power BI', label: 'Power BI / Excel', icon: '📊' },
+  { id: 'SAP', label: 'SAP ERP', icon: '💼' },
+  { id: 'Primavera P6', label: 'Primavera P6', icon: '⏱️' },
+  { id: 'ArcGIS', label: 'ArcGIS / QGIS', icon: '🗺️' },
+  { id: 'Python / SQL', label: 'Python / SQL', icon: '💻' },
+  { id: 'SolidWorks', label: 'SolidWorks', icon: '⚙️' },
+  { id: 'CONCAR', label: 'CONCAR / Contable', icon: '🧾' },
+];
+
 export default function App() {
   const [jobs, setJobs] = useState([]);
   const [metadata, setMetadata] = useState(null);
@@ -50,6 +98,7 @@ export default function App() {
   // Filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSector, setSelectedSector] = useState('ALL');
+  const [selectedSoftware, setSelectedSoftware] = useState('ALL');
   const [selectedLocation, setSelectedLocation] = useState('ALL');
   const [onlyWithSalary, setOnlyWithSalary] = useState(false);
   const [onlyActive, setOnlyActive] = useState(true); // Filtro estricto: Solo vacantes vigentes por defecto
@@ -262,11 +311,11 @@ export default function App() {
   // Reiniciar paginación al cambiar filtros
   useEffect(() => {
     setVisibleCount(30);
-  }, [searchTerm, selectedSector, selectedLocation, onlyWithSalary, onlyActive, onlySaved]);
+  }, [searchTerm, selectedSector, selectedSoftware, selectedLocation, onlyWithSalary, onlyActive, onlySaved]);
 
-  // Búsqueda inteligente multi-palabra y en todo el texto (Full-Text Search)
+  // Búsqueda inteligente multi-palabra y en todo el texto (Full-Text Search) con Expansión Semántica
   const filteredJobs = useMemo(() => {
-    const queryTokens = normalize(searchTerm).split(' ').filter(Boolean);
+    const rawTokens = normalize(searchTerm).split(' ').filter(Boolean);
     const todayStr = new Date().toISOString().split('T')[0];
 
     return jobs.filter((job) => {
@@ -291,13 +340,49 @@ export default function App() {
         ${job.description || ''} 
         ${job.source || ''} 
         ${(job.tags || []).join(' ')}
+        ${(job.tools || []).join(' ')}
       `);
 
-      // 2. Verificar que CADA palabra clave buscada exista en cualquier parte del texto
-      const matchesSearch = queryTokens.length === 0 || 
-        queryTokens.every(token => fullJobText.includes(token));
+      // 2. Búsqueda Semántica Flexible con Sinónimos y Variantes Técnicas
+      if (rawTokens.length > 0) {
+        const matchesAllTokens = rawTokens.every(token => {
+          // A. Coincidencia literal directa
+          if (fullJobText.includes(token)) return true;
 
-      if (!matchesSearch) return false;
+          // B. Casos de software compuestos
+          if (token === 'civil3d' && (fullJobText.includes('civil 3d') || fullJobText.includes('civil3d'))) return true;
+          if (token === '3d' && fullJobText.includes('civil 3d')) return true;
+          if (token === 'p6' && fullJobText.includes('primavera')) return true;
+
+          // C. Raíz / Stemming básico en español (cortar sufijos comunes de profesión)
+          if (token.length > 5) {
+            const stem = token.replace(/(es|os|as|ero|era|ores|ora|ico|ica|al|ia|ado|ada)$/, '');
+            if (stem.length >= 4 && fullJobText.includes(stem)) return true;
+          }
+
+          // D. Búsqueda en Diccionario de Sinónimos y Equivalencias
+          for (const [key, synonyms] of Object.entries(SYNONYM_MAP)) {
+            if (key === token || synonyms.includes(token)) {
+              if (synonyms.some(syn => fullJobText.includes(syn))) {
+                return true;
+              }
+            }
+          }
+
+          return false;
+        });
+
+        if (!matchesAllTokens) return false;
+      }
+
+      // 2.1 Filtro directo por Software / Programa Técnico
+      if (selectedSoftware !== 'ALL') {
+        const swNorm = normalize(selectedSoftware);
+        const matchesSw = fullJobText.includes(swNorm) || 
+          (job.tools || []).some(t => normalize(t).includes(swNorm)) ||
+          (job.tags || []).some(t => normalize(t).includes(swNorm));
+        if (!matchesSw) return false;
+      }
 
       // 3. Filtro por Sector
       if (selectedSector !== 'ALL') {
@@ -335,7 +420,7 @@ export default function App() {
       if (!a.is_featured && b.is_featured) return 1;
       return new Date(b.published_at || 0) - new Date(a.published_at || 0);
     });
-  }, [jobs, searchTerm, selectedSector, selectedLocation, onlyWithSalary, onlyActive, onlySaved, savedJobs]);
+  }, [jobs, searchTerm, selectedSector, selectedSoftware, selectedLocation, onlyWithSalary, onlyActive, onlySaved, savedJobs]);
 
   // Lista visible paginada
   const displayedJobs = useMemo(() => {
@@ -531,12 +616,12 @@ export default function App() {
             </div>
 
             <p className="text-[11px] text-slate-400 text-center pt-3">
-              💡 Busca por puesto o empresa: <em>'asistente contable lima'</em>, <em>'bcp'</em>, <em>'ing civil'</em>, <em>'arequipa'</em>, <em>'remoto'</em>...
+              💡 Busca por profesión, puesto o software: <em>'ing agricola'</em>, <em>'autocad'</em>, <em>'civil 3d'</em>, <em>'ing sistemas'</em>, <em>'s10'</em>, <em>'ing industrial'</em>, <em>'senati'</em>...
             </p>
           </div>
 
           {/* Barra de Filtros de Sectores (Chips) */}
-          <div className="pt-2 space-y-2">
+          <div className="pt-2 space-y-3">
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
               {sectorList.map((sec) => (
                 <button
@@ -552,6 +637,42 @@ export default function App() {
                   <span>{sec.label}</span>
                 </button>
               ))}
+            </div>
+
+            {/* Barra Especializada: Programas y Software Más Pedidos en Perú */}
+            <div className="bg-slate-900/70 p-2.5 rounded-2xl border border-slate-800/80 max-w-4xl mx-auto">
+              <div className="flex items-center justify-between pb-1.5 px-1">
+                <span className="text-[11px] font-bold text-blue-300 flex items-center gap-1.5">
+                  <span>🛠️</span>
+                  <span>Filtrar por Software y Programas Técnicos:</span>
+                </span>
+                {selectedSoftware !== 'ALL' && (
+                  <button 
+                    onClick={() => setSelectedSoftware('ALL')}
+                    className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
+                  >
+                    Quitar filtro ({selectedSoftware})
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
+                {SOFTWARE_LIST.map((sw) => (
+                  <button
+                    key={sw.id}
+                    onClick={() => setSelectedSoftware(selectedSoftware === sw.id ? 'ALL' : sw.id)}
+                    className={`px-2.5 py-1 rounded-lg font-semibold transition-all flex items-center gap-1 cursor-pointer text-[11px] ${
+                      selectedSoftware === sw.id
+                        ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-300'
+                        : sw.id === 'ALL'
+                        ? 'bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                        : 'bg-slate-800/80 text-blue-200 border border-blue-900/50 hover:bg-blue-900/60 hover:text-white'
+                    }`}
+                  >
+                    <span>{sw.icon}</span>
+                    <span>{sw.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Filtros secundarios: Ubicación rápida y Sueldo */}
@@ -632,6 +753,14 @@ export default function App() {
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                 <span>🟢 Solo Vigentes</span>
+              </span>
+            )}
+            {selectedSoftware !== 'ALL' && (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold border border-blue-300 flex items-center gap-1.5">
+                <span>💻 Software: {selectedSoftware}</span>
+                <button onClick={() => setSelectedSoftware('ALL')} className="hover:text-blue-950 cursor-pointer">
+                  <X className="w-3 h-3" />
+                </button>
               </span>
             )}
             {searchTerm && (
@@ -864,6 +993,41 @@ export default function App() {
                       </span>
                     )}
                   </div>
+
+                  {/* Badges de Programas y Software Requeridos */}
+                  {(() => {
+                    const detected = [];
+                    const softwareNames = ['AutoCAD', 'Civil 3D', 'Revit', 'BIM', 'S10', 'Primavera P6', 'SAP2000', 'ETABS', 'ArcGIS', 'QGIS', 'WaterCAD', 'Power BI', 'SAP', 'Python', 'SQL', 'SolidWorks', 'CONCAR'];
+                    const combined = `${job.title} ${job.description} ${(job.tags || []).join(' ')} ${(job.tools || []).join(' ')}`.toLowerCase();
+                    for (const sw of softwareNames) {
+                      if (combined.includes(sw.toLowerCase()) && !detected.includes(sw)) {
+                        detected.push(sw);
+                      }
+                    }
+                    if (detected.length === 0) return null;
+                    return (
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
+                        <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                          <span>💻</span>
+                          <span>Programas:</span>
+                        </span>
+                        {detected.map(tool => (
+                          <button
+                            key={tool}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSearchTerm(tool);
+                              window.scrollTo({ top: 480, behavior: 'smooth' });
+                            }}
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white border border-blue-200 transition-colors cursor-pointer shadow-2xs"
+                            title={`Buscar todas las ofertas con ${tool}`}
+                          >
+                            {tool}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Columna Derecha: Acciones (Postular, WhatsApp, Guardar, Copiar) */}

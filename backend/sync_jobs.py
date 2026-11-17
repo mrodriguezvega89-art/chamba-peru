@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from sources.peru_public import get_peru_public_jobs
 from sources.peru_government_portals import get_all_government_portal_jobs
+from sources.peru_agro_professions import get_agro_and_specialized_professions_jobs
 from sources.peru_private import get_peru_private_jobs
 from sources.peru_top100 import get_top100_jobs
 from sources.peru_construction import get_construction_realestate_jobs
@@ -56,6 +57,13 @@ def run_synchronization():
         all_jobs.extend(gov_jobs)
     except Exception as e:
         print(f"[Error] Falló la extracción de portales oficiales del Estado: {e}")
+
+    # 1.2 Sector Agrícola, Riego, Programas Técnicos (AutoCAD, Civil 3D, etc.) e Ingenierías Especializadas
+    try:
+        agro_tech_jobs = get_agro_and_specialized_professions_jobs()
+        all_jobs.extend(agro_tech_jobs)
+    except Exception as e:
+        print(f"[Error] Falló la extracción agroindustrial y técnica: {e}")
 
     # 2. Empresas privadas de Perú (CIP Lima, Delosi Starbucks/KFC, TYPSA, etc.)
     try:
