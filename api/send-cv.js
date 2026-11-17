@@ -192,7 +192,7 @@ export default async function handler(req, res) {
       ];
     }
 
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    let response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -202,7 +202,23 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload)
     });
 
-    const result = await response.json();
+    let result = await response.json();
+
+    // Si Brevo rechaza porque el remitente todoventasperu no está aún verificado, reintentamos con la cuenta de Google registrada
+    if (!response.ok && (JSON.stringify(result).toLowerCase().includes('sender') || JSON.stringify(result).toLowerCase().includes('unverified'))) {
+      console.warn('Reintentando con remitente verificado de Google:', result);
+      payload.sender.email = 'mrodriguezvega89@gmail.com';
+      response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': brevoApiKey
+        },
+        body: JSON.stringify(payload)
+      });
+      result = await response.json();
+    }
 
     if (!response.ok) {
       console.error('Error en Brevo API:', result);
