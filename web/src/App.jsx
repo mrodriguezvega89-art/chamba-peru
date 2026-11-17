@@ -1798,21 +1798,22 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
           setIsApplying(true);
           setApplyError('');
 
-          const destination = targetEmail || 'copinsa.ingenieros@gmail.com';
+          // Destino central: siempre el buzón de Chamba Perú para evitar que FormSubmit envíe correos de activación en inglés a empresas externas
+          const destination = 'todoventasperu@outlook.com.pe';
 
           const formData = new FormData();
           formData.append('Nombre del Postulante', applyForm.name.trim());
           formData.append('Telefono o WhatsApp', applyForm.phone.trim());
           formData.append('Correo Electronico', applyForm.email.trim());
           formData.append('Puesto al que postula', selectedJob.title);
-          formData.append('Empresa', selectedJob.company);
+          formData.append('Empresa Destino', selectedJob.company);
+          formData.append('Correo Oficial de la Empresa', targetEmail || 'copinsa.ingenieros@gmail.com');
           formData.append('IP Reconocida del Postulante', clientIp);
           formData.append('Fecha y Hora de Envio', new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' }));
           formData.append('Mensaje de Presentacion', applyForm.message.trim() || 'Sin mensaje adicional');
           formData.append('Curriculum Vitae', applyForm.file);
-          formData.append('_subject', `[Chamba Perú] Nueva Postulación con CV para ${selectedJob.title} - ${applyForm.name.trim()}`);
+          formData.append('_subject', `[Chamba Perú] Nueva Postulación con CV: ${selectedJob.title} - ${applyForm.name.trim()} (${selectedJob.company})`);
           formData.append('_replyto', applyForm.email.trim());
-          formData.append('_cc', 'todoventasperu@outlook.com.pe'); // Copia obligatoria de auditoría para la administración de Chamba Perú
           formData.append('_captcha', 'false');
           formData.append('_template', 'table');
 
@@ -1879,7 +1880,7 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
           }
         };
 
-        const mailtoApplyUrl = `mailto:${targetEmail || 'copinsa.ingenieros@gmail.com'}?subject=Postulaci%C3%B3n%20para%20${encodeURIComponent(selectedJob.title)}%20-%20${encodeURIComponent(applyForm.name || 'Candidato')}&body=Hola%20equipo%20de%20${encodeURIComponent(selectedJob.company)},%0A%0AMe%20pongo%20en%20contacto%20para%20postular%20al%20puesto%20de%20${encodeURIComponent(selectedJob.title)}.%0A%0AMis%20datos:%0A-%20Nombre:%20${encodeURIComponent(applyForm.name || '')}%0A-%20Tel%C3%A9fono:%20${encodeURIComponent(applyForm.phone || '')}%0A-%20Correo:%20${encodeURIComponent(applyForm.email || '')}%0A%0AAdjunto%20mi%20Curr%C3%ADculum%20Vitae%20en%20este%20mensaje.%0A%0ASaludos%20cordiales.`;
+        const mailtoApplyUrl = `mailto:${targetEmail || 'copinsa.ingenieros@gmail.com'}?cc=todoventasperu@outlook.com.pe&subject=Postulaci%C3%B3n%20para%20${encodeURIComponent(selectedJob.title)}%20-%20${encodeURIComponent(applyForm.name || 'Candidato')}&body=Estimado%20equipo%20de%20selecci%C3%B3n%20de%20${encodeURIComponent(selectedJob.company)},%0A%0AMe%20pongo%20en%20contacto%20para%20postular%20al%20puesto%20de%20${encodeURIComponent(selectedJob.title)}%20publicado%20en%20el%20Portal%20Chamba%20Per%C3%BA.%0A%0AMis%20datos%20de%20contacto:%0A-%20Nombres:%20${encodeURIComponent(applyForm.name || '')}%0A-%20Tel%C3%A9fono%20/%20WhatsApp:%20${encodeURIComponent(applyForm.phone || '')}%0A-%20Correo:%20${encodeURIComponent(applyForm.email || '')}%0A%0A${encodeURIComponent(applyForm.message ? 'Presentación:\n' + applyForm.message + '\n\n' : '')}Adjunto%20mi%20Curr%C3%ADculum%20Vitae%20a%20este%20mensaje.%0A%0AAtentamente,%0A${encodeURIComponent(applyForm.name || 'Postulante')}`;
 
         const whatsappApplyUrl = selectedJob.employer_phone 
           ? `https://api.whatsapp.com/send?phone=${selectedJob.employer_phone}&text=Hola,%20deseo%20postular%20al%20puesto%20de%20${encodeURIComponent(selectedJob.title)}%20en%20${encodeURIComponent(selectedJob.company)}.%20Mi%20nombre%20es%20${encodeURIComponent(applyForm.name || '')}%20y%20deseo%20adjuntar%20mi%20CV.`
@@ -2100,16 +2101,15 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
                       </div>
 
                       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                        <button
-                          onClick={() => {
-                            setSelectedJob(null);
-                            setApplySuccess(false);
-                            setApplyForm({ name: '', phone: '', email: '', message: '', file: null });
-                          }}
-                          className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+                        <a
+                          href={mailtoApplyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
                         >
-                          Cerrar y volver a empleos
-                        </button>
+                          <Mail className="w-4 h-4" />
+                          <span>Enviar también desde mi correo personal</span>
+                        </a>
 
                         <a
                           href={whatsappApplyUrl}
@@ -2118,8 +2118,19 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
                           className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
                         >
                           <MessageCircle className="w-4 h-4" />
-                          <span>Enviar copia por WhatsApp</span>
+                          <span>Enviar por WhatsApp</span>
                         </a>
+
+                        <button
+                          onClick={() => {
+                            setSelectedJob(null);
+                            setApplySuccess(false);
+                            setApplyForm({ name: '', phone: '', email: '', message: '', file: null });
+                          }}
+                          className="w-full sm:w-auto px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs rounded-xl transition-all cursor-pointer"
+                        >
+                          Cerrar
+                        </button>
                       </div>
                     </div>
                   ) : (
