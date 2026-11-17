@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from datetime import datetime, timezone
 
 # Añadir directorio actual al path
@@ -22,6 +23,24 @@ def run_synchronization():
     print(f"===========================================================")
 
     all_jobs = []
+
+    # 0. Vacantes Destacadas / Patrocinadas (Prioritarias de empresas locales)
+    try:
+        featured_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "featured_jobs.json")
+        if os.path.exists(featured_file):
+            with open(featured_file, "r", encoding="utf-8") as f:
+                featured_data = json.load(f)
+                active_featured = []
+                today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+                for fj in featured_data:
+                    # Si no ha vencido, mantenerla en el TOP
+                    if not fj.get("expires_at") or fj.get("expires_at") >= today_str:
+                        fj["is_featured"] = True
+                        active_featured.append(fj)
+                all_jobs.extend(active_featured)
+                print(f"[Featured] {len(active_featured)} vacantes destacadas cargadas en el TOP.")
+    except Exception as e:
+        print(f"[Error] Falló la carga de vacantes destacadas: {e}")
 
     # 1. Convocatorias públicas de Perú (Estado, Ministerios, Entidades en los 25 departamentos)
     try:
@@ -83,8 +102,14 @@ def run_synchronization():
             if j.get('is_active') and not unique_jobs[jid].get('is_active'):
                 unique_jobs[jid] = j
 
-    final_jobs = list(unique_jobs.values())
-    print(f"\n[Resultado] Total extraídos: {len(all_jobs)} | Únicos deduplicados: {len(final_jobs)}")
+    # Ordenar: Vacantes destacadas en el TOP absoluto, luego regulares por fecha descendente
+    featured_list = [j for j in unique_jobs.values() if j.get('is_featured')]
+    regular_list = [j for j in unique_jobs.values() if not j.get('is_featured')]
+    featured_list.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+    regular_list.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+    final_jobs = featured_list + regular_list
+
+    print(f"\n[Resultado] Total extraídos: {len(all_jobs)} | Únicos deduplicados: {len(final_jobs)} (Destacadas TOP: {len(featured_list)})")
 
     # 5. Guardar en JSON público para la Web
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

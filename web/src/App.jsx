@@ -315,6 +315,11 @@ export default function App() {
       }
 
       return true;
+    }).sort((a, b) => {
+      // Vacantes destacadas siempre en el TOP absoluto de la lista
+      if (a.is_featured && !b.is_featured) return -1;
+      if (!a.is_featured && b.is_featured) return 1;
+      return new Date(b.published_at || 0) - new Date(a.published_at || 0);
     });
   }, [jobs, searchTerm, selectedSector, selectedLocation, onlyWithSalary, onlySaved, savedJobs]);
 
@@ -568,6 +573,7 @@ export default function App() {
             const isCmp = job.source.includes('CMP');
             const isSaved = savedJobs.includes(job.id);
             const isHighlighted = highlightedJobId === job.id;
+            const isFeatured = !!job.is_featured;
             const directShareUrl = `${window.location.origin}/?id=${encodeURIComponent(job.id)}`;
 
             // Mensaje para compartir por WhatsApp
@@ -582,6 +588,8 @@ export default function App() {
                 className={`group bg-white rounded-2xl p-5 border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-5 relative ${
                   isHighlighted 
                     ? 'ring-2 ring-blue-600 border-blue-500 bg-blue-50/20 shadow-lg' 
+                    : isFeatured
+                    ? 'border-amber-400 bg-gradient-to-r from-amber-50/50 via-white to-amber-50/20 shadow-md ring-1 ring-amber-300'
                     : 'border-slate-200 hover:border-blue-500 hover:shadow-md'
                 }`}
               >
@@ -600,6 +608,14 @@ export default function App() {
                       <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                       <span itemProp="name" className="truncate max-w-[240px]">{job.company}</span>
                     </span>
+
+                    {/* Badge de Destacada en el TOP */}
+                    {isFeatured && (
+                      <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300 flex items-center gap-1 shadow-2xs">
+                        <Sparkles className="w-3 h-3 text-amber-600" />
+                        <span>⭐ Destacada en el TOP</span>
+                      </span>
+                    )}
 
                     {/* Badge de Sector */}
                     {job.sector && (
@@ -856,10 +872,10 @@ export default function App() {
         </section>
       </main>
 
-      {/* 4. Modal para Publicar Vacante (1 mes gratis y renovación S/ 5.00 con Yape / Plin) */}
+      {/* 4. Modal para Publicar Vacante (2 vacantes x 1 mes en el TOP por S/ 5 con Yape / Plin) */}
       {showPublishModal && (() => {
-        const mailSubject = `Publicar Vacante Gratis - (${pubForm.company ? pubForm.company.trim() : 'Empresa o Ruc'})`;
-        const mailBody = `Publicar Vacante Gratis en Chamba Perú
+        const mailSubject = `Publicar Vacante - (${pubForm.company ? pubForm.company.trim() : 'Empresa o Ruc'})`;
+        const mailBody = `Solicitud de Publicación de Vacante en Chamba Perú
 
 Empresa o Ruc: ${pubForm.company || ''}
 Titulo de la Vacante: ${pubForm.title || ''}
@@ -869,11 +885,15 @@ Contacto para la Vacante: ${pubForm.contact || ''}
 Fecha para la Vacante: ${pubForm.date || ''}
 
 --------------------------------------------------
+PLAN Y CONDICIONES SELECCIONADAS:
+• Ubicación: Parte superior de la web, en los primeros lugares (TOP Destacado).
+• Cobertura: Publicación de hasta 2 vacantes durante 1 mes completo (30 días).
+• Tarifa: S/ 5.00 soles mediante Billeteras Digitales de Perú (Yape / Plin).
+• Forma de abono: Por favor indicarme los datos de pago en su correo de respuesta.
+--------------------------------------------------
 DATOS DE VERIFICACIÓN Y AUDITORÍA:
 • IP de origen del remitente: ${clientIp}
 • Fecha y hora de envío: ${new Date().toLocaleString('es-PE')}
-• Términos aceptados: 1 mes de publicación gratis en Chamba Perú.
-• Renovación o nuevas vacantes: S/ 5.00 soles vía Billeteras Digitales Perú (Yape / Plin).
 --------------------------------------------------`;
 
         const mailtoUrl = `mailto:todoventasperu@outlook.com.pe?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
@@ -894,28 +914,35 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA:
                   <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                     Empresas y Empleadores en Perú
                   </span>
-                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    🟢 1 Mes Gratis
+                  <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-600" />
+                    <span>Primeros Lugares en el TOP</span>
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-black text-slate-900">
                   Publicar Vacante de Empleo
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Tu oferta estará visible para miles de postulantes en todo el Perú durante <strong>un mes gratis (30 días)</strong>.
+                  Tus vacantes se colocarán en la <strong>parte superior de la web, en los primeros lugares</strong> con distintivo destacado para máxima visibilidad en todo el Perú.
                 </p>
               </div>
 
               {/* Aviso de Precios y Políticas */}
-              <div className="bg-gradient-to-r from-blue-50/70 to-emerald-50/70 p-3.5 rounded-xl border border-blue-200/80 text-xs space-y-1.5 text-slate-700">
+              <div className="bg-gradient-to-r from-amber-50/80 via-blue-50/60 to-emerald-50/60 p-4 rounded-xl border border-amber-300 text-xs space-y-2 text-slate-700">
                 <div className="flex items-center justify-between font-bold text-slate-900">
-                  <span>📋 Condiciones de Publicación:</span>
-                  <span className="text-emerald-700 font-extrabold">Primer mes: S/ 0.00</span>
+                  <span className="flex items-center gap-1 text-slate-800 font-extrabold text-xs">
+                    <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span>Plan Destacado en el TOP</span>
+                  </span>
+                  <span className="text-emerald-800 font-extrabold bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300 text-xs">
+                    S/ 5.00 soles (2 vacantes x 1 mes)
+                  </span>
                 </div>
-                <ul className="space-y-1 text-[11px] text-slate-600">
-                  <li>• <strong>Publicación inicial:</strong> La vacante estará activa en la web durante un mes gratis.</li>
-                  <li>• <strong>Renovación o vacantes posteriores:</strong> Se cobra un monto mínimo de <strong>S/ 5.00 soles</strong> por publicación mediante <strong>Billeteras Digitales de Perú (Yape / Plin)</strong>.</li>
-                  <li>• <strong>Seguridad anti-fraude:</strong> Registro y auditoría de la IP de origen para reconocer y verificar al anunciante.</li>
+                <ul className="space-y-1.5 text-[11px] text-slate-700">
+                  <li>• <strong>Ubicación Preferencial:</strong> Tus ofertas se colocarán en la <strong>parte superior de la web, en los primeros lugares</strong>.</li>
+                  <li>• <strong>Promoción:</strong> El pago corresponde para publicar <strong>2 vacantes durante un mes completo (30 días)</strong>.</li>
+                  <li>• <strong>Método de pago:</strong> Billeteras Digitales de Perú (<strong>Yape / Plin</strong>). Todos los pagos y códigos se indicarán en el <strong>correo de respuesta correspondiente</strong>.</li>
+                  <li>• <strong>Seguridad anti-fraude:</strong> Reconocimiento de IP de origen para auditoría y validación del anunciante.</li>
                 </ul>
               </div>
 
