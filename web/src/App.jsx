@@ -1798,24 +1798,16 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
           setIsApplying(true);
           setApplyError('');
 
-          // Destino central: siempre el buzón de Chamba Perú para evitar que FormSubmit envíe correos de activación en inglés a empresas externas
-          const destination = 'todoventasperu@outlook.com.pe';
-
-          const formData = new FormData();
-          formData.append('Nombre del Postulante', applyForm.name.trim());
-          formData.append('Telefono o WhatsApp', applyForm.phone.trim());
-          formData.append('Correo Electronico', applyForm.email.trim());
-          formData.append('Puesto al que postula', selectedJob.title);
-          formData.append('Empresa Destino', selectedJob.company);
-          formData.append('Correo Oficial de la Empresa', targetEmail || 'copinsa.ingenieros@gmail.com');
-          formData.append('IP Reconocida del Postulante', clientIp);
-          formData.append('Fecha y Hora de Envio', new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' }));
-          formData.append('Mensaje de Presentacion', applyForm.message.trim() || 'Sin mensaje adicional');
-          formData.append('Curriculum Vitae', applyForm.file);
-          formData.append('_subject', `[Chamba Perú] Nueva Postulación con CV: ${selectedJob.title} - ${applyForm.name.trim()} (${selectedJob.company})`);
-          formData.append('_replyto', applyForm.email.trim());
-          formData.append('_captcha', 'false');
-          formData.append('_template', 'table');
+          // Helper para convertir el archivo de CV a base64 para envío al servidor Vercel
+          const toBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+              const res = reader.result;
+              resolve(typeof res === 'string' && res.includes(',') ? res.split(',')[1] : res);
+            };
+            reader.onerror = (error) => reject(error);
+          });
 
           const recordSubmission = () => {
             const newRecord = {
@@ -1836,6 +1828,58 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
               localStorage.setItem('chamba_applied_jobs', JSON.stringify(updated));
             } catch (err) {}
           };
+
+          try {
+            // 1. Intentar envío automático a través de la API Serverless propia de Chamba Perú (/api/send-cv)
+            const base64File = await toBase64(applyForm.file);
+            const apiRes = await fetch('/api/send-cv', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                name: applyForm.name.trim(),
+                phone: applyForm.phone.trim(),
+                email: applyForm.email.trim(),
+                message: applyForm.message.trim(),
+                jobTitle: selectedJob.title,
+                company: selectedJob.company,
+                targetEmail: targetEmail || 'copinsa.ingenieros@gmail.com',
+                clientIp: clientIp,
+                fileName: applyForm.file?.name,
+                fileBase64: base64File
+              })
+            });
+
+            if (apiRes.ok) {
+              recordSubmission();
+              setApplySuccess(true);
+              return;
+            } else {
+              console.warn('Servidor respondió status:', apiRes.status);
+            }
+          } catch (serverErr) {
+            console.warn('API interna no disponible en este entorno, aplicando respaldo:', serverErr);
+          }
+
+          // 2. Respaldo por FormSubmit a todoventasperu@outlook.com.pe en caso de falla del servidor
+          const destination = 'todoventasperu@outlook.com.pe';
+          const formData = new FormData();
+          formData.append('Nombre del Postulante', applyForm.name.trim());
+          formData.append('Telefono o WhatsApp', applyForm.phone.trim());
+          formData.append('Correo Electronico', applyForm.email.trim());
+          formData.append('Puesto al que postula', selectedJob.title);
+          formData.append('Empresa Destino', selectedJob.company);
+          formData.append('Correo Oficial de la Empresa', targetEmail || 'copinsa.ingenieros@gmail.com');
+          formData.append('IP Reconocida del Postulante', clientIp);
+          formData.append('Fecha y Hora de Envio', new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' }));
+          formData.append('Mensaje de Presentacion', applyForm.message.trim() || 'Sin mensaje adicional');
+          formData.append('Curriculum Vitae', applyForm.file);
+          formData.append('_subject', `[Chamba Perú] Nueva Postulación con CV: ${selectedJob.title} - ${applyForm.name.trim()} (${selectedJob.company})`);
+          formData.append('_replyto', applyForm.email.trim());
+          formData.append('_captcha', 'false');
+          formData.append('_template', 'table');
 
           try {
             const res = await fetch(`https://formsubmit.co/ajax/${destination}`, {
