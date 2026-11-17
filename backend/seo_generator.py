@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 import urllib.parse
 
-def generate_seo_assets(jobs, base_dir, site_url="https://chambaperu.vercel.app"):
+def generate_seo_assets(jobs, base_dir, site_url="https://chamba-peru-one.vercel.app"):
     """
     Genera automáticamente el sitemap.xml y robots.txt para Google, Bing y Yahoo
     optimizando la indexación para Google for Jobs y búsquedas orgánicas en Perú.

@@ -10,4 +10,4 @@ Allow: /?departamento=*
 User-agent: Googlebot
 Allow: /
 
-Sitemap: https://chambaperu.vercel.app/sitemap.xml
+Sitemap: https://chamba-peru-one.vercel.app/sitemap.xml
