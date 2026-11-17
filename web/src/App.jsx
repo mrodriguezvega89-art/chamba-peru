@@ -21,7 +21,10 @@ import {
   BookmarkCheck,
   Send,
   MessageCircle,
-  Check
+  Check,
+  Mail,
+  Copy,
+  Smartphone
 } from 'lucide-react';
 
 // Función para normalizar texto (sin acentos, minúsculas y sin caracteres raros)
@@ -50,6 +53,26 @@ export default function App() {
   const [onlySaved, setOnlySaved] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [highlightedJobId, setHighlightedJobId] = useState(null);
+
+  // Formulario y datos de Publicar Vacante
+  const [clientIp, setClientIp] = useState('Detectando...');
+  const [copiedMail, setCopiedMail] = useState(false);
+  const [pubForm, setPubForm] = useState({
+    company: '',
+    title: '',
+    description: '',
+    requirements: '',
+    contact: '',
+    date: ''
+  });
+
+  // Detectar IP pública real del usuario para auditoría y control de vacantes
+  useEffect(() => {
+    fetch('https://api.ipify.org?format=json')
+      .then((res) => res.json())
+      .then((data) => setClientIp(data.ip || 'No disponible'))
+      .catch(() => setClientIp('Verificada por conexión'));
+  }, []);
 
   // Paginación progresiva para velocidad instantánea con 1,700+ empleos
   const [visibleCount, setVisibleCount] = useState(30);
@@ -833,49 +856,205 @@ export default function App() {
         </section>
       </main>
 
-      {/* 4. Modal para Publicar Empleo Gratis */}
-      {showPublishModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative space-y-4">
-            <button
-              onClick={() => setShowPublishModal(false)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-full"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* 4. Modal para Publicar Vacante (1 mes gratis y renovación S/ 5.00 con Yape / Plin) */}
+      {showPublishModal && (() => {
+        const mailSubject = `Publicar Vacante Gratis - (${pubForm.company ? pubForm.company.trim() : 'Empresa o Ruc'})`;
+        const mailBody = `Publicar Vacante Gratis en Chamba Perú
 
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Para Empresas y Reclutadores</span>
-              <h3 className="text-xl font-bold text-slate-900">Publicar una vacante en Perú</h3>
-              <p className="text-xs text-slate-600">
-                La publicación directa es 100% gratuita para empresas formalizadas en Perú o que contraten talento peruano.
+Empresa o Ruc: ${pubForm.company || ''}
+Titulo de la Vacante: ${pubForm.title || ''}
+Descripcion de la Vacante: ${pubForm.description || ''}
+Requisitos de la Vacante: ${pubForm.requirements || ''}
+Contacto para la Vacante: ${pubForm.contact || ''}
+Fecha para la Vacante: ${pubForm.date || ''}
+
+--------------------------------------------------
+DATOS DE VERIFICACIÓN Y AUDITORÍA:
+• IP de origen del remitente: ${clientIp}
+• Fecha y hora de envío: ${new Date().toLocaleString('es-PE')}
+• Términos aceptados: 1 mes de publicación gratis en Chamba Perú.
+• Renovación o nuevas vacantes: S/ 5.00 soles vía Billeteras Digitales Perú (Yape / Plin).
+--------------------------------------------------`;
+
+        const mailtoUrl = `mailto:todoventasperu@outlook.com.pe?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
+            <div className="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 relative my-8 space-y-4 max-h-[90vh] overflow-y-auto">
+              <button
+                onClick={() => setShowPublishModal(false)}
+                className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Encabezado */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                    Empresas y Empleadores en Perú
+                  </span>
+                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    🟢 1 Mes Gratis
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                  Publicar Vacante de Empleo
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Tu oferta estará visible para miles de postulantes en todo el Perú durante <strong>un mes gratis (30 días)</strong>.
+                </p>
+              </div>
+
+              {/* Aviso de Precios y Políticas */}
+              <div className="bg-gradient-to-r from-blue-50/70 to-emerald-50/70 p-3.5 rounded-xl border border-blue-200/80 text-xs space-y-1.5 text-slate-700">
+                <div className="flex items-center justify-between font-bold text-slate-900">
+                  <span>📋 Condiciones de Publicación:</span>
+                  <span className="text-emerald-700 font-extrabold">Primer mes: S/ 0.00</span>
+                </div>
+                <ul className="space-y-1 text-[11px] text-slate-600">
+                  <li>• <strong>Publicación inicial:</strong> La vacante estará activa en la web durante un mes gratis.</li>
+                  <li>• <strong>Renovación o vacantes posteriores:</strong> Se cobra un monto mínimo de <strong>S/ 5.00 soles</strong> por publicación mediante <strong>Billeteras Digitales de Perú (Yape / Plin)</strong>.</li>
+                  <li>• <strong>Seguridad anti-fraude:</strong> Registro y auditoría de la IP de origen para reconocer y verificar al anunciante.</li>
+                </ul>
+              </div>
+
+              {/* Formulario de Datos */}
+              <div className="space-y-3 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Empresa o Ruc: <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Comercial Lima SAC / 20601234567"
+                      value={pubForm.company}
+                      onChange={(e) => setPubForm({ ...pubForm, company: e.target.value })}
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Titulo de la Vacante: <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Asistente Contable / Vendedora"
+                      value={pubForm.title}
+                      onChange={(e) => setPubForm({ ...pubForm, title: e.target.value })}
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Descripcion de la Vacante: <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    rows="2"
+                    placeholder="Detalla las funciones principales, horario o modalidad (Presencial/Remoto)..."
+                    value={pubForm.description}
+                    onChange={(e) => setPubForm({ ...pubForm, description: e.target.value })}
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Requisitos de la Vacante: <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    rows="2"
+                    placeholder="Ej. Egresado o técnico, 1 año de experiencia, manejo de herramientas..."
+                    value={pubForm.requirements}
+                    onChange={(e) => setPubForm({ ...pubForm, requirements: e.target.value })}
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Contacto para la Vacante: <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Correo, WhatsApp o link oficial"
+                      value={pubForm.contact}
+                      onChange={(e) => setPubForm({ ...pubForm, contact: e.target.value })}
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Fecha para la Vacante: <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Hasta el 30 de Noviembre / Inmediato"
+                      value={pubForm.date}
+                      onChange={(e) => setPubForm({ ...pubForm, date: e.target.value })}
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Badge de Auditoría de IP */}
+              <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-500">
+                <span className="flex items-center gap-1.5 font-medium text-slate-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Auditoría de Seguridad:</span>
+                </span>
+                <span className="font-mono text-slate-600">
+                  IP Remitente: <strong className="text-blue-700">{clientIp}</strong>
+                </span>
+              </div>
+
+              {/* Botones de Acción */}
+              <div className="space-y-2 pt-1">
+                <a
+                  href={mailtoUrl}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all active:scale-95"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Enviar a todoventasperu@outlook.com.pe</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(mailBody);
+                    setCopiedMail(true);
+                    setTimeout(() => setCopiedMail(false), 2500);
+                  }}
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-300 transition-colors"
+                >
+                  {copiedMail ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-600" />
+                      <span className="text-emerald-700 font-bold">¡Plantilla copiada al portapapeles!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 text-slate-500" />
+                      <span>Copiar datos de la vacante (para Outlook Web o Gmail)</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <p className="text-[11px] text-center text-slate-400">
+                Revisamos y activamos la publicación en menos de 24 horas hábiles.
               </p>
             </div>
-
-            <div className="bg-slate-50 p-4 rounded-xl text-xs space-y-2 border border-slate-200 text-slate-700">
-              <p className="font-semibold text-slate-800">Requisitos para publicar:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Nombre de la empresa o RUC.</li>
-                <li>Título claro del puesto y departamento (o remoto).</li>
-                <li>Enlace oficial de postulación o correo corporativo.</li>
-                <li>Rango salarial sugerido.</li>
-              </ul>
-            </div>
-
-            <a
-              href="mailto:empleos@chambaperu.dev?subject=Nueva%20Vacante%20para%20Chamba%20Perú"
-              className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-all"
-            >
-              <span>Enviar vacante por correo</span>
-              <ExternalLink className="w-4 h-4" />
-            </a>
-
-            <p className="text-[11px] text-center text-slate-400">
-              Revisamos y publicamos las ofertas en menos de 24 horas.
-            </p>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 5. Pie de página legal y transparente */}
       <footer className="bg-white border-t border-slate-200 mt-12 py-8 px-4 text-xs text-slate-500">
