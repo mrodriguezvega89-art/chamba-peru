@@ -71,7 +71,35 @@ const SYNONYM_MAP = {
   'electricista': ['electricista', 'electrotecnia', 'tableros', 'subestaciones', 'plc', 'variadores', 'senati'],
   'topografo': ['topografo', 'topografia', 'estacion total', 'nivel', 'civil 3d', 'gps diferencial', 'sencico'],
   'senati': ['senati', 'tecnico', 'tecsup', 'egresado tecnico', 'mecanico', 'electricista', 'soldador'],
-  'sencico': ['sencico', 'topografia', 'edificaciones', 'laboratorio de suelos', 'construccion civil']
+  'sencico': ['sencico', 'topografia', 'edificaciones', 'laboratorio de suelos', 'construccion civil'],
+  // Entidades del Estado y Sector Público
+  'sedapal': ['sedapal', 'agua potable', 'alcantarillado', 'saneamiento', 'sanitaria'],
+  'sunat': ['sunat', 'tributaria', 'aduanas', 'aduanera', 'tributario', 'fiscalizacion tributaria'],
+  'reniec': ['reniec', 'identificacion', 'registro civil', 'registrador'],
+  'onpe': ['onpe', 'electoral', 'procesos electorales', 'odpe'],
+  'essalud': ['essalud', 'seguro social de salud', 'hospital', 'asistencial'],
+  'petroperu': ['petroperu', 'petroleos del peru', 'talara', 'refineria'],
+  'sutran': ['sutran', 'transporte terrestre', 'fiscalizacion', 'inspector de transito'],
+  'contraloria': ['contraloria', 'auditor', 'auditoria', 'control gubernamental', 'oci'],
+  'servir': ['servir', 'talento peru', 'cas', 'servicio civil'],
+  'atu': ['atu', 'transporte urbano', 'fiscalizador de transporte'],
+  'sunarp': ['sunarp', 'registros publicos', 'registral', 'catastro'],
+  'sunafil': ['sunafil', 'fiscalizacion laboral', 'inspector de trabajo'],
+  'sunedu': ['sunedu', 'universidades', 'educacion superior'],
+  'osiptel': ['osiptel', 'telecomunicaciones', 'regulacion'],
+  'inei': ['inei', 'estadistica e informatica', 'censos', 'encuestador'],
+  'corpac': ['corpac', 'aviacion', 'aeropuertos', 'transito aereo'],
+  'mml': ['mml', 'municipalidad de lima', 'munlima', 'metropolitana de lima'],
+  'municipalidad': ['municipalidad', 'municipio', 'comuna', 'gobierno local', 'serenazgo', 'distrital', 'provincial'],
+  'midis': ['midis', 'desarrollo e inclusion social'],
+  'mincul': ['mincul', 'ministerio de cultura', 'cultura', 'arqueologia'],
+  'mininter': ['mininter', 'ministerio del interior', 'seguridad ciudadana'],
+  'mindef': ['mindef', 'ministerio de defensa', 'defensa nacional'],
+  'minsa': ['minsa', 'ministerio de salud', 'salud publica'],
+  'produce': ['produce', 'ministerio de la produccion', 'pesqueria', 'mype'],
+  'mtpe': ['mtpe', 'ministerio de trabajo', 'promocion del empleo'],
+  'minjus': ['minjus', 'minjusdh', 'ministerio de justicia', 'defensa publica', 'abogados'],
+  'minam': ['minam', 'ministerio del ambiente', 'ambiental', 'biodiversidad']
 };
 
 const SOFTWARE_LIST = [
@@ -334,11 +362,20 @@ export default function App() {
           job.source.includes('MTC') || 
           job.source.includes('MVCS') || 
           job.source.includes('PNSU') || 
-          job.source.includes('Gobierno')
+          job.source.includes('Gobierno') ||
+          job.source.includes('Portal Oficial')
         )) || 
         (job.tags || []).includes('Sector Público');
 
-      if (!includePublicSector && isPublicJob) {
+      // Si el usuario busca explícitamente una entidad o término público, permitir ver resultados coincidentes aun si el botón general está apagado
+      const isExplicitPublicSearch = rawTokens.some(token => 
+        ['sunat', 'sedapal', 'essalud', 'reniec', 'onpe', 'petroperu', 'sutran', 'contraloria', 
+         'midis', 'minsa', 'mtc', 'muni', 'municipalidad', 'banco de la nacion', 'atu', 'sunarp', 
+         'sunafil', 'sunedu', 'osiptel', 'inei', 'corpac', 'mincul', 'mininter', 'mindef', 
+         'produce', 'mvcs', 'mtpe', 'minjus', 'minam', 'servir', 'cas', 'gobierno', 'estado'].some(k => token.includes(k) || k.includes(token))
+      );
+
+      if (!includePublicSector && !isExplicitPublicSearch && isPublicJob) {
         return false;
       }
 

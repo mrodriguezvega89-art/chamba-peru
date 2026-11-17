@@ -96,7 +96,51 @@ PUBLIC_ENDPOINTS = [
     ("AGRO_RURAL", "https://www.convocatoriasdetrabajo.com/empleos-PROGRAMA-DE-DESARROLLO-PRODUCTIVO-AGRARIO-RURAL-AGRO-RURAL-146.html"),
     ("AGROBANCO", "https://www.convocatoriasdetrabajo.com/empleos-BANCO-AGROPECUARIO-AGROBANCO-622.html"),
     ("AGROIDEAS", "https://www.convocatoriasdetrabajo.com/empleos-PROGRAMA-DE-COMPENSACIONES-PARA-LA-COMPETITIVIDAD-AGROIDEAS-151.html"),
-    ("DRA_PIURA", "https://www.convocatoriasdetrabajo.com/empleos-DIRECCION-REGIONAL-DE-AGRICULTURA-PIURA-AGRO-PIURA-132.html")
+    ("DRA_PIURA", "https://www.convocatoriasdetrabajo.com/empleos-DIRECCION-REGIONAL-DE-AGRICULTURA-PIURA-AGRO-PIURA-132.html"),
+    # =========================================================================
+    # NUEVAS ENTIDADES OFICIALES DEL ESTADO SOLICITADAS
+    # =========================================================================
+    # 1. Ministerios del Estado
+    ("MIDIS", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-DESARROLLO-E-INCLUSION-SOCIAL-MIDIS-20.html"),
+    ("MINCUL", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-CULTURA-MINCUL-3.html"),
+    ("MININTER", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DEL-INTERIOR-MININTER-7.html"),
+    ("MINDEF", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-DEFENSA-MINDEF-6.html"),
+    ("MINSA", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-SALUD-MINSA-8.html"),
+    ("PRODUCE", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-LA-PRODUCCION-PRODUCE-9.html"),
+    ("MVCS", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-VIVIENDA-CONSTRUCCION-Y-SANEAMIENTO-MVCS-13.html"),
+    ("MTC", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-TRANSPORTES-Y-COMUNICACIONES-MTC-46.html"),
+    ("MTPE", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-TRABAJO-Y-PROMOCION-DEL-EMPLEO-MTPE-10.html"),
+    ("MINJUSDH", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DE-JUSTICIA-Y-DERECHOS-HUMANOS-MINJUS-11.html"),
+    ("MINAM", "https://www.convocatoriasdetrabajo.com/empleos-MINISTERIO-DEL-AMBIENTE-MINAM-4.html"),
+    ("MINISTERIOS_P2", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-MINISTERIOS-DEL-ESTADO-1.html?page=2"),
+    ("MINISTERIOS_P3", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-MINISTERIOS-DEL-ESTADO-1.html?page=3"),
+    # 2. Empresas Estatales y Entidades Prestadoras de Servicios (EPS)
+    ("SEDAPAL", "https://www.convocatoriasdetrabajo.com/empleos-SERVICIO-DE-AGUA-POTABLE-Y-ALCANTARILLADO-DE-LIMA-SEDAPAL-1061.html"),
+    ("BANCO_NACION", "https://www.convocatoriasdetrabajo.com/empleos-BANCO-DE-LA-NACION-27.html"),
+    ("ESSALUD", "https://www.convocatoriasdetrabajo.com/empleos-SEGURO-SOCIAL-DE-SALUD-ESSALUD-10.html"),
+    ("PETROPERU", "https://www.convocatoriasdetrabajo.com/empleos-PETROLEOS-DEL-PERU-PETROPERU-26.html"),
+    ("CORPAC", "https://www.convocatoriasdetrabajo.com/empleos-CORPORACION-PERUANA-DE-AEROPUERTOS-Y-AVIACION-COMERCIAL-CORPAC-28.html"),
+    ("EMPRESAS_ESTATALES_P2", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-empresas-estatales-23.html?page=2"),
+    # 3. Organismos Autónomos y Entidades Adjuntas Principales
+    ("SUNAT", "https://www.convocatoriasdetrabajo.com/empleos-SUPERINTENDENCIA-NACIONAL-DE-ADUANAS-Y-DE-ADMINISTRACION-TRIBUTARIA-SUNAT-13.html"),
+    ("RENIEC", "https://www.convocatoriasdetrabajo.com/empleos-REGISTRO-NACIONAL-DE-IDENTIFICACION-Y-ESTADO-CIVIL-RENIEC-2.html"),
+    ("ONPE", "https://www.convocatoriasdetrabajo.com/empleos-OFICINA-NACIONAL-DE-PROCESOS-ELECTORALES-ONPE-22.html"),
+    ("ATU", "https://www.convocatoriasdetrabajo.com/empleos-AUTORIDAD-DE-TRANSPORTE-URBANO-PARA-LIMA-Y-CALLAO-ATU-765.html"),
+    ("SUNARP", "https://www.convocatoriasdetrabajo.com/empleos-SUPERINTENDENCIA-NACIONAL-DE-LOS-REGISTROS-PUBLICOS-SUNARP-15.html"),
+    ("SUNAFIL", "https://www.convocatoriasdetrabajo.com/empleos-SUPERINTENDENCIA-NACIONAL-DE-FISCALIZACION-LABORAL-SUNAFIL-20.html"),
+    ("SUTRAN", "https://www.convocatoriasdetrabajo.com/empleos-SUPERINTENDENCIA-DE-TRANSPORTE-TERRESTRE-DE-PERSONAS-CARGA-Y-MERCANCIAS-SUTRAN-16.html"),
+    ("SUNEDU", "https://www.convocatoriasdetrabajo.com/empleos-SUPERINTENDENCIA-NACIONAL-DE-EDUCACION-SUPERIOR-UNIVERSITARIA-SUNEDU-21.html"),
+    ("CONTRALORIA", "https://www.convocatoriasdetrabajo.com/empleos-LA-CONTRALORIA-GENERAL-DE-LA-REPUBLICA-DEL-PERU-CONTRALORIA-143.html"),
+    ("OSIPTEL", "https://www.convocatoriasdetrabajo.com/empleos-ORGANISMO-SUPERVISOR-DE-INVERSION-PRIVADA-EN-TELECOMUNICACIONES-OSIPTEL-18.html"),
+    ("INEI", "https://www.convocatoriasdetrabajo.com/empleos-INSTITUTO-NACIONAL-DE-ESTADISTICA-E-INFORMATICA-INEI-14.html"),
+    ("SUPERINTENDENCIAS", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-superintendencias-estado-28.html"),
+    ("SUPERINTENDENCIAS_P2", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-superintendencias-estado-28.html?page=2"),
+    ("ORGANISMOS_ELECTORALES", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-organismos-electorales-estado-26.html"),
+    ("ORGANISMOS_REGULADORES_P2", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-organismos-reguladores-estado-27.html?page=2"),
+    # 4. Municipalidades y Gobiernos Locales a Nivel Nacional
+    ("MML_LIMA", "https://www.convocatoriasdetrabajo.com/empleos-MUNICIPALIDAD-METROPOLITANA-DE-LIMA-MML-11.html"),
+    ("MUNICIPIOS_PROVINCIALES_DISTRITALES", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-MUNICIPIOS-PROVINCIALES-DISTRITALES-6.html"),
+    ("MUNICIPIOS_PROVINCIALES_DISTRITALES_P2", "https://www.convocatoriasdetrabajo.com/bolsa-trabajo-en-MUNICIPIOS-PROVINCIALES-DISTRITALES-6.html?page=2")
 ]
 
 def fetch_html(url, timeout=10):
@@ -172,6 +216,12 @@ def parse_convocatoria_articles(html, default_company="Sector Público"):
             comp_text = clean_text(company_match.group(1))
             if comp_text and len(comp_text) > 1:
                 company = comp_text
+
+        # Si la empresa sigue siendo genérica, extraer del prefijo del título si existe
+        if company in ["Sector Público", ""] and ':' in raw_title:
+            prefix = raw_title.split(':', 1)[0].strip()
+            if not any(k in prefix.upper() for k in ['N°', 'Nº', 'CÓDIGO', 'CODIGO', 'CAS', 'DL', 'PROCESO', 'CONCURSO']):
+                company = prefix
 
         # 4. Logo
         logo_url = ""
@@ -307,7 +357,39 @@ def fetch_single_endpoint(pair):
     name, url = pair
     html = fetch_html(url)
     if html:
-        return parse_convocatoria_articles(html, default_company="Sector Público")
+        # Mapear nombre de endpoint a nombre de entidad legible
+        endpoint_company_map = {
+            "SUNAT": "SUNAT",
+            "RENIEC": "RENIEC",
+            "ONPE": "ONPE",
+            "ATU": "ATU",
+            "SUNARP": "SUNARP",
+            "SUNAFIL": "SUNAFIL",
+            "SUTRAN": "SUTRAN",
+            "SUNEDU": "SUNEDU",
+            "CONTRALORIA": "Contraloría General de la República",
+            "OSIPTEL": "OSIPTEL",
+            "INEI": "INEI",
+            "SEDAPAL": "SEDAPAL",
+            "BANCO_NACION": "Banco de la Nación",
+            "ESSALUD": "EsSalud",
+            "PETROPERU": "PETROPERÚ",
+            "CORPAC": "CORPAC S.A.",
+            "MML_LIMA": "Municipalidad Metropolitana de Lima",
+            "MIDIS": "Ministerio de Desarrollo e Inclusión Social (MIDIS)",
+            "MINCUL": "Ministerio de Cultura (MINCUL)",
+            "MININTER": "Ministerio del Interior (MININTER)",
+            "MINDEF": "Ministerio de Defensa (MINDEF)",
+            "MINSA": "Ministerio de Salud (MINSA)",
+            "PRODUCE": "Ministerio de la Producción (PRODUCE)",
+            "MVCS": "Ministerio de Vivienda, Construcción y Saneamiento (MVCS)",
+            "MTC": "Ministerio de Transportes y Comunicaciones (MTC)",
+            "MTPE": "Ministerio de Trabajo y Promoción del Empleo (MTPE)",
+            "MINJUSDH": "Ministerio de Justicia (MINJUS)",
+            "MINAM": "Ministerio del Ambiente (MINAM)"
+        }
+        default_company = endpoint_company_map.get(name, "Sector Público")
+        return parse_convocatoria_articles(html, default_company=default_company)
     return []
 
 def get_peru_public_jobs():
