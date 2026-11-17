@@ -348,126 +348,196 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
       
-      {/* 1. Barra superior de navegación */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+      {/* 1. Barra superior de navegación (Diseño Dark Moderno con Icono Oficial) */}
+      <header className="sticky top-0 z-30 bg-[#0B1528]/95 backdrop-blur-md border-b border-slate-800 shadow-md">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          
+          {/* Logo con el icono oficial y texto Chamba Perú */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-sm shadow-blue-500/20">
-              💼
-            </div>
+            <img 
+              src="/brand-icon.png" 
+              alt="Chamba Perú Logo" 
+              className="h-10 sm:h-11 w-auto object-contain filter drop-shadow-md cursor-pointer hover:scale-105 transition-transform" 
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedSector('ALL');
+                setSelectedLocation('ALL');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-black text-lg sm:text-xl text-slate-900 tracking-tight">Empleos<span className="text-blue-600">Perú</span></span>
-                <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold border border-blue-200">Chamba Perú</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-semibold border border-red-200 hidden sm:inline-block">🇵🇪 PE</span>
+                <span 
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedSector('ALL');
+                    setSelectedLocation('ALL');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="font-black text-xl text-white tracking-tight cursor-pointer"
+                >
+                  Chamba<span className="text-red-500">Perú</span>
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 font-bold border border-blue-700/60 hidden sm:inline-block">
+                  Empleos Oficiales
+                </span>
               </div>
-              <p className="text-[11px] text-slate-500 hidden sm:block">Portal de Empleos y Vacantes Laborales en Perú</p>
+              <p className="text-[11px] text-slate-400 hidden md:block">
+                Portal de Empleos y Convocatorias en Perú
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            {/* Botón de Ayuda / Soporte Oficial */}
-            <a
-              href="mailto:todoventasperu@outlook.com.pe?subject=Consulta%20o%20Soporte%20-%20Portal%20de%20Empleos%20Perú"
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 border border-slate-200 transition-colors"
-              title="Contacto y soporte directo: todoventasperu@outlook.com.pe"
+          {/* Menú de Navegación Central (Desktop) */}
+          <nav className="hidden md:flex items-center gap-5 text-xs font-semibold text-slate-300">
+            <button 
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedSector('ALL');
+                setSelectedLocation('ALL');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-white transition-colors cursor-pointer"
             >
-              <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
-              <span>¿Necesitas Ayuda?</span>
+              Inicio
+            </button>
+            <button 
+              onClick={() => window.scrollTo({ top: 380, behavior: 'smooth' })}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Buscar Empleo
+            </button>
+            <a 
+              href="mailto:todoventasperu@outlook.com.pe?subject=Consulta%20o%20Soporte%20-%20Chamba%20Perú"
+              className="hover:text-white transition-colors"
+            >
+              Contacto / Ayuda
             </a>
+          </nav>
 
-            {/* Botón de Empleos Guardados / Favoritos */}
+          {/* Acciones Derecha: Guardados y Publicar Oferta */}
+          <div className="flex items-center gap-2.5">
+            {/* Botón Guardados */}
             <button
               onClick={() => setOnlySaved(!onlySaved)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
                 onlySaved 
-                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs' 
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                  ? 'bg-amber-500 text-white border-amber-600 shadow-sm' 
+                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
               }`}
-              title="Ver empleos que has guardado"
+              title="Ver empleos guardados"
             >
-              {onlySaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4 text-amber-500" />}
-              <span>Guardados</span>
+              {onlySaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4 text-amber-400" />}
+              <span className="hidden sm:inline">Guardados</span>
               {savedJobs.length > 0 && (
-                <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${onlySaved ? 'bg-white text-amber-600' : 'bg-amber-100 text-amber-800'}`}>
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-400 text-amber-950 font-black">
                   {savedJobs.length}
                 </span>
               )}
             </button>
 
-            <div className="hidden md:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>{metadata?.total_active ? `${metadata.total_active} ofertas vigentes` : 'Actualizado hoy'}</span>
-            </div>
-
+            {/* Botón Rojo "Publicar Oferta" como en la imagen */}
             <button
               onClick={() => setShowPublishModal(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs sm:text-sm transition-colors shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Publicar Vacante</span>
+              <span>Publicar Oferta</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* 2. Hero y Buscador Full-Text ("Busca todo el texto cualquier palabra clave") */}
-      <section className="bg-gradient-to-b from-blue-50/80 via-white to-slate-50 pt-9 pb-7 px-4 border-b border-slate-200/60">
-        <div className="max-w-4xl mx-auto text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-xs font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-            <span>Portal de Empleos Perú (Chamba Perú) — 1,700+ vacantes verificadas</span>
+      {/* 2. Hero y Buscador Dual (Inspirado en el diseño oficial de Gemini) */}
+      <section className="bg-gradient-to-b from-[#0B1528] via-[#0D1C34] to-[#0A1322] text-white pt-12 pb-16 px-4 border-b border-slate-800 relative overflow-hidden">
+        {/* Glows y Luces de Fondo */}
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
+          
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-900/60 text-blue-200 text-xs font-semibold border border-blue-700/50 shadow-inner">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Portal Oficial de Empleos en Perú — 1,700+ vacantes verificadas</span>
           </div>
 
-          <div className="space-y-1.5">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-              Portal de <span className="text-blue-600">Empleos en Perú</span>
+          <div className="space-y-3">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight">
+              ¡Encuentra tu próxima <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-rose-300 to-white">chamba</span> hoy mismo!
             </h1>
-            <p className="text-base sm:text-xl font-bold text-slate-700">
-              Vacantes Laborales, Convocatorias de Trabajo y Empleos Vigentes 2026
+            <p className="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto font-normal">
+              Conectamos el talento peruano con las mejores oportunidades laborales y convocatorias del país.
             </p>
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
-            Buscamos todos los días en convocatorias públicas de los 25 departamentos, Colegios Profesionales (CIP, CMP, CAL), Top 100 Empresas y vacantes remotas.
-          </p>
 
-          {/* Caja de Búsqueda Full-Text */}
+          {/* Barra de Búsqueda Dual Estilo Cápsula (Puesto + Ciudad + Botón Rojo "Buscar") */}
           <div className="pt-2 max-w-3xl mx-auto">
-            <div className="relative flex items-center bg-white rounded-2xl shadow-xl shadow-slate-200/70 border-2 border-slate-200 focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100 transition-all p-2">
-              <Search className="w-6 h-6 text-slate-400 ml-3 shrink-0" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Busca cualquier puesto o empresa: 'asistente lima sunat', 'cosapi', 'bcp', 'medico', 'barista'..."
-                className="w-full px-3 py-2 text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none text-sm sm:text-base font-medium"
-              />
-              {searchTerm && (
-                <button 
-                  onClick={() => setSearchTerm('')}
-                  className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full mr-1"
-                  title="Limpiar búsqueda"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
+            <div className="flex flex-col sm:flex-row items-center bg-white rounded-2xl sm:rounded-full p-2 shadow-2xl shadow-black/60 border border-slate-200 gap-2 sm:gap-0">
+              
+              {/* Campo 1: Puesto, palabra clave */}
+              <div className="flex items-center flex-1 w-full px-3 py-1.5">
+                <Search className="w-5 h-5 text-slate-400 shrink-0 mr-2.5" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar empleo, palabra clave..."
+                  className="w-full text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none text-sm font-medium"
+                />
+                {searchTerm && (
+                  <button onClick={() => setSearchTerm('')} className="p-1 text-slate-400 hover:text-slate-600 rounded-full">
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Separador vertical */}
+              <div className="hidden sm:block w-px h-8 bg-slate-200 my-auto" />
+
+              {/* Campo 2: Ciudad o región */}
+              <div className="flex items-center flex-1 w-full px-3 py-1.5">
+                <MapPin className="w-5 h-5 text-slate-400 shrink-0 mr-2.5" />
+                <input
+                  type="text"
+                  value={selectedLocation === 'ALL' ? '' : selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value || 'ALL')}
+                  placeholder="Ciudad o región (Perú)..."
+                  className="w-full text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none text-sm font-medium"
+                />
+                {selectedLocation !== 'ALL' && (
+                  <button onClick={() => setSelectedLocation('ALL')} className="p-1 text-slate-400 hover:text-slate-600 rounded-full">
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Botón Rojo "Buscar" */}
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 480, behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto px-8 py-3 rounded-xl sm:rounded-full bg-red-600 hover:bg-red-700 text-white font-black text-sm shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
+              >
+                Buscar
+              </button>
             </div>
-            <p className="text-[11px] text-slate-500 text-left px-2 pt-1.5">
-              💡 <em>Puedes buscar y combinar palabras: <strong>'contador arequipa'</strong>, <strong>'practicante sst'</strong>, <strong>'operador minero'</strong> o <strong>'abogado lima'</strong>.</em>
+
+            <p className="text-[11px] text-slate-400 text-center pt-3">
+              💡 Busca por puesto o empresa: <em>'asistente contable lima'</em>, <em>'bcp'</em>, <em>'ing civil'</em>, <em>'arequipa'</em>, <em>'remoto'</em>...
             </p>
           </div>
 
           {/* Barra de Filtros de Sectores (Chips) */}
-          <div className="pt-3 space-y-2">
+          <div className="pt-2 space-y-2">
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
               {sectorList.map((sec) => (
                 <button
                   key={sec.id}
                   onClick={() => setSelectedSector(selectedSector === sec.id ? 'ALL' : sec.id)}
-                  className={`px-3 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                     selectedSector === sec.id
-                      ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-600/30'
-                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                      ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400/50'
+                      : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                   }`}
                 >
                   <span>{sec.icon}</span>
@@ -476,40 +546,48 @@ export default function App() {
               ))}
             </div>
 
-            {/* Filtros secundarios: Ubicación y Sueldo */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs">
-              <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Ubicación:</span>
+            {/* Filtros secundarios: Ubicación rápida y Sueldo */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs">
+              <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Filtro rápido:</span>
               <button
                 onClick={() => setSelectedLocation(selectedLocation === 'Lima' ? 'ALL' : 'Lima')}
-                className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-                  selectedLocation === 'Lima' ? 'bg-slate-900 text-white' : 'bg-slate-200/70 text-slate-700 hover:bg-slate-300/70'
+                className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
+                  selectedLocation === 'Lima' 
+                    ? 'bg-red-600 text-white font-bold shadow-xs' 
+                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
               >
                 📍 Lima
               </button>
               <button
                 onClick={() => setSelectedLocation(selectedLocation === 'Provincias' ? 'ALL' : 'Provincias')}
-                className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-                  selectedLocation === 'Provincias' ? 'bg-slate-900 text-white' : 'bg-slate-200/70 text-slate-700 hover:bg-slate-300/70'
+                className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
+                  selectedLocation === 'Provincias' 
+                    ? 'bg-red-600 text-white font-bold shadow-xs' 
+                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
               >
                 🏔️ Provincias / Regiones
               </button>
               <button
                 onClick={() => setSelectedLocation(selectedLocation === 'Remoto' ? 'ALL' : 'Remoto')}
-                className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-                  selectedLocation === 'Remoto' ? 'bg-slate-900 text-white' : 'bg-slate-200/70 text-slate-700 hover:bg-slate-300/70'
+                className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
+                  selectedLocation === 'Remoto' 
+                    ? 'bg-red-600 text-white font-bold shadow-xs' 
+                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
               >
                 🌐 Remoto
               </button>
 
-              <span className="text-slate-300">|</span>
+              <span className="text-slate-600 hidden sm:inline">|</span>
 
               <button
                 onClick={() => setOnlyWithSalary(!onlyWithSalary)}
-                className={`px-2.5 py-1 rounded-md font-medium transition-all flex items-center gap-1 ${
-                  onlyWithSalary ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+                className={`px-3 py-1 rounded-full font-medium transition-all flex items-center gap-1 cursor-pointer ${
+                  onlyWithSalary 
+                    ? 'bg-emerald-600 text-white font-bold shadow-xs' 
+                    : 'bg-emerald-950/40 text-emerald-300 border border-emerald-700/60 hover:bg-emerald-900/50'
                 }`}
               >
                 <span>💰</span>
