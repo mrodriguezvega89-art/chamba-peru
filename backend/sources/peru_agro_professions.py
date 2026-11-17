@@ -40,7 +40,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Responsable del programa fitosanitario, control biológico de plagas y formulación de soluciones nutritivas de fertirriego para cultivos de exportación (espárrago, arándano y hortalizas). Coordinación con SENASA y certificaciones internacionales GlobalGAP.",
             "requirements": "Ingeniero Agrónomo colegiado. Mínimo 4 años de experiencia en gestión fitosanitaria de agroexportación. Manejo de software agronómico y Excel para control de aplicaciones y monitoreo fenológico.",
-            "contact": "https://danper.com/trabaja-con-nosotros/",
+            "contact": "https://danper.com/",
             "tools": ["Excel Avanzado", "GlobalGAP", "Fertirriego"]
         },
         {
@@ -52,7 +52,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Elaboración de expedientes técnicos de obras hidráulicas en fundo: reservorios de geomembrana, pozos tubulares, líneas de conducción y redes de riego presurizado. Levantamientos topográficos y diseño con AutoCAD Civil 3D.",
             "requirements": "Ingeniero Agrícola o Civil. Experiencia en diseño de reservorios y canales. Manejo avanzado de AutoCAD, Civil 3D y presupuestos con S10.",
-            "contact": "https://www.agrokasa.pe/talento",
+            "contact": "https://www.agrokasa.com.pe/",
             "tools": ["AutoCAD", "Civil 3D", "S10 Presupuestos", "Topografía"]
         },
         {
@@ -64,7 +64,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Supervisión de líneas de selección, calibrado, empaque y conservación en frío de arándano y uva de mesa de exportación. Aseguramiento de la inocuidad alimentaria (HACCP, BRCGS, FDA).",
             "requirements": "Ingeniero Agroindustrial o Industrias Alimentarias. Experiencia en plantas de empaque agroexportadoras. Manejo de ERP SAP y KPIs de productividad.",
-            "contact": "https://cerroprieto.com/trabaja-con-nosotros/",
+            "contact": "https://www.cerroprieto.com/",
             "tools": ["SAP ERP", "HACCP", "Excel Avanzado"]
         },
         {
@@ -76,7 +76,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Operación y mantenimiento preventivo de cabezales de riego automatizados, baterías de filtros de anillas/arena, inyectoras de fertilizantes y lectura de tensiómetros y sondas de humedad en campo.",
             "requirements": "Técnico egresado en Producción Agropecuaria, Mecánica de Riego o afines (SENATI/Instituto). Experiencia comprobada de 1 año en cabezales de riego presurizado.",
-            "contact": "https://hortifrutperu.com/unete-a-nuestro-equipo/",
+            "contact": "https://www.hortifrut.com/",
             "tools": ["Cabezales de Riego", "Sensores de Humedad", "Automatización"]
         },
         {
@@ -112,7 +112,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "CAS",
             "description": "Residencia de obras de siembra y cosecha de agua, construcción de qochas, zanjas de infiltración y mejoramiento de canales de regadío en zonas altoandinas.",
             "requirements": "Ingeniero Agrícola o Civil colegiado. Mínimo 3 años de experiencia en obras hidráulicas rurales. Dominio de AutoCAD, S10 y valorizaciones de obra pública.",
-            "contact": "https://www.agrorural.gob.pe/convocatorias/",
+            "contact": "https://www.convocatoriasdetrabajo.com/empleos-PROGRAMA-DE-DESARROLLO-PRODUCTIVO-AGRARIO-RURAL-AGRO-RURAL-146.html",
             "tools": ["AutoCAD", "S10 Presupuestos", "Civil 3D", "Valorizaciones"]
         },
 
@@ -128,7 +128,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Diseño geométrico de carreteras, autopistas y accesos mineros. Modelamiento tridimensional de corredores, rasantes, curvas de nivel y cálculo de volúmenes de corte y relleno con AutoCAD Civil 3D. Cumplimiento de la norma DG-2018 del MTC.",
             "requirements": "Ingeniero Civil colegiado. Mínimo 4 años dedicados exclusivamente al diseño vial con AutoCAD Civil 3D. Manejo de infraworks, Civil 3D avanzado y subassembly composer.",
-            "contact": "https://aenza.com.pe/empleos/",
+            "contact": "https://aenza.hiringroom.com/jobs",
             "tools": ["AutoCAD Civil 3D", "InfraWorks", "Subassembly Composer", "Norma DG-2018"]
         },
         {
@@ -140,7 +140,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Gestión y modelado de proyectos de edificación e infraestructura bajo metodología BIM. Detección de interferencias con Navisworks Manage, extracción de metrados automáticos y planos de construcción con Revit y AutoCAD.",
             "requirements": "Titulado en Arquitectura o Ingeniería Civil. Certificación profesional en Autodesk Revit y Navisworks. Experiencia comprobada en proyectos BIM LOD 350 a 400.",
-            "contact": "https://cosapi.evaluar.com/",
+            "contact": "https://www.cosapi.com.pe/",
             "tools": ["Revit", "Navisworks", "AutoCAD", "BIM", "Metrados"]
         },
         {
@@ -152,7 +152,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Elaboración de ofertas comerciales y presupuestos de licitaciones de gran envergadura (minería, puentes, plantas industriales). Análisis de costos unitarios (ACU), cotización de insumos y subcontratos con software S10 y Excel.",
             "requirements": "Ingeniero Civil con dominio absoluto del software S10 Costos y Presupuestos. Mínimo 3 años preparando propuestas para licitaciones públicas y privadas.",
-            "contact": "https://jjc.com.pe/oportunidades-laborales/",
+            "contact": "https://www.jjc.com.pe/",
             "tools": ["S10 Presupuestos", "Excel Avanzado", "MS Project", "AutoCAD"]
         },
         {
@@ -164,7 +164,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Régimen Minero / Obra",
             "description": "Desarrollo del cronograma maestro de obra con Oracle Primavera P6. Control de curva S, gestión del valor ganado (EVM), reprogramaciones y análisis de camino crítico (CPM).",
             "requirements": "Ingeniero Civil o Industrial con certificación en Primavera P6. Experiencia mínima de 4 años en proyectos de minería o infraestructura civil pesada.",
-            "contact": "https://mota-engil.pe/carreras",
+            "contact": "https://www.mota-engil.pe/",
             "tools": ["Primavera P6", "MS Project", "Curva S", "Excel Avanzado"]
         },
         {
@@ -176,7 +176,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Régimen 14x7",
             "description": "Levantamientos topográficos, replanteo de ejes, control de taludes y cálculo de movimiento de tierras diario en operaciones mineras. Procesamiento de nubes de puntos y mallas con Civil 3D.",
             "requirements": "Técnico en Topografía o Geomática (SENCICO / SENATI). Manejo experto de Estación Total Leica/Trimble, GPS Diferencial y AutoCAD Civil 3D.",
-            "contact": "https://sanmartin.pe/trabaja-con-nosotros/",
+            "contact": "https://sanmartinperu.pe/",
             "tools": ["AutoCAD Civil 3D", "Estación Total", "GPS Diferencial", "Sencico"]
         },
         {
@@ -204,7 +204,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Planilla Completa + Beneficios",
             "description": "Diseño e implementación de microservicios y aplicaciones web de alta concurrencia para clientes bancarios y telecomunicaciones. Arquitectura orientada a eventos, APIs REST y contenedores Docker/Kubernetes.",
             "requirements": "Ingeniero de Sistemas, Software o Informática. Mínimo 3 años de experiencia con JavaScript/TypeScript, React.js en frontend y Node.js o Python en backend. Bases de datos SQL (PostgreSQL) y NoSQL.",
-            "contact": "https://pe.nttdata.com/carreras",
+            "contact": "https://pe.nttdata.com/",
             "tools": ["React", "Node.js", "Python", "TypeScript", "SQL", "Docker", "Git"]
         },
         {
@@ -216,7 +216,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Administración, afinamiento (tuning), respaldos (RMAN), alta disponibilidad (AlwaysOn / RAC) y optimización de consultas SQL para entornos críticos de misión empresarial.",
             "requirements": "Titulado en Ingeniería de Sistemas o Computación. Certificación Oracle OCP o Microsoft MCSA/Azure Database Administrator. Experiencia de 3 años como DBA.",
-            "contact": "https://canvia.com/trabaja-con-nosotros/",
+            "contact": "https://canvia.com/",
             "tools": ["Oracle DB", "SQL Server", "PL/SQL", "Tuning", "Linux"]
         },
         {
@@ -228,7 +228,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Monitoreo en SOC, gestión de incidentes de seguridad, configuración de Firewalls (Fortinet, Palo Alto), VPNs y cumplimiento de normas ISO/IEC 27001 en entidades bancarias y del Estado.",
             "requirements": "Ingeniero de Sistemas, Electrónica o Redes. Certificaciones CISSP, CEH, CCNA Security o NSE4. Experiencia mínima de 3 años en operaciones de ciberseguridad.",
-            "contact": "https://www.indracompany.com/es/carreras-peru",
+            "contact": "https://www.indracompany.com/es/",
             "tools": ["Ciberseguridad", "Fortinet", "CISCO", "ISO 27001", "Linux"]
         },
         {
@@ -240,7 +240,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Construcción de dashboards interactivos, pipelines de ETL, modelos relacionales y tabulares con Power BI (DAX, Power Query) y consultas SQL avanzadas para toma de decisiones ejecutivas.",
             "requirements": "Ingeniero de Sistemas, Industrial o Estadística. Dominio experto de Microsoft Power BI, lenguaje DAX, SQL Server y Excel Financiero.",
-            "contact": "https://stefanini.com/es/carreras",
+            "contact": "https://stefanini.com/",
             "tools": ["Power BI", "SQL", "DAX", "ETL", "Excel Avanzado"]
         },
         {
@@ -252,7 +252,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Automatización de pipelines CI/CD, infraestructura como código (Terraform), orquestación de microservicios en Kubernetes (EKS/AKS) y observabilidad para los canales digitales del banco.",
             "requirements": "Ingeniero de Sistemas o afines. Experiencia en nube AWS o Azure, Docker, Kubernetes, GitLab CI/CD, scripting en Python o Bash. Metodología ágil Scrum.",
-            "contact": "https://jobs.bcp.com.pe/",
+            "contact": "https://www.viabcp.com/nosotros/trabaja-con-nosotros",
             "tools": ["AWS", "Kubernetes", "Docker", "Terraform", "CI/CD", "Python"]
         },
 
@@ -268,7 +268,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Liderar proyectos de optimización de procesos de manufactura, reducción de mermas, balanceo de líneas y estandarización de puestos aplicando herramientas Lean Manufacturing y Six Sigma.",
             "requirements": "Ingeniero Industrial colegiado. Certificación Green Belt Six Sigma deseable. Manejo de software Bizagi para modelamiento de procesos (BPMN), Minitab y Power BI.",
-            "contact": "https://alicorp.evaluar.com/",
+            "contact": "https://www.alicorp.com.pe/pe/es/talento/",
             "tools": ["Lean Manufacturing", "Six Sigma", "Bizagi", "Power BI", "SAP"]
         },
         {
@@ -280,7 +280,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Planificación del plan maestro de producción (MPS) y requerimiento de materiales (MRP). Control de stocks en centros de distribución a nivel nacional. Manejo de SAP Módulo PP/MM.",
             "requirements": "Titulado en Ingeniería Industrial. Mínimo 3 años en planificación de la cadena de suministro. Dominio de SAP ERP y Excel a nivel avanzado (Macros/VBA).",
-            "contact": "https://www.ab-inbev.com/careers/",
+            "contact": "https://www.ab-inbev.com/",
             "tools": ["SAP PP/MM", "Excel Macros", "Supply Chain", "Power BI"]
         },
         {
@@ -292,7 +292,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo (Sede Pisco)",
             "description": "Implementación y auditoría del Sistema de Gestión de Seguridad conforme a la Ley 29783 y normas ISO 45001. Elaboración de matriz IPERC, investigación de incidentes y capacitaciones de alto riesgo.",
             "requirements": "Ingeniero Industrial, Higiene y Seguridad o Minas. Colegiado y habilitado. Experiencia mínima de 3 años en plantas industriales siderúrgicas o minería.",
-            "contact": "https://acerosarequipa.evaluar.com/",
+            "contact": "https://www.acerosarequipa.com/",
             "tools": ["Ley 29783", "ISO 45001", "IPERC", "SSOMA"]
         },
         {
@@ -304,7 +304,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Supervisión de recepción, almacenamiento, picking y despacho de productos terminados en centro de distribución automatizado. Control de inventarios cíclicos y KPIs logísticos (OTIF).",
             "requirements": "Ingeniero Industrial o Administración. Manejo de software WMS (Warehouse Management System), SAP WM/MM y Excel.",
-            "contact": "https://grupogloria.evaluar.com/",
+            "contact": "https://www.gloria.com.pe/",
             "tools": ["WMS", "SAP WM", "Excel Avanzado", "Logística"]
         },
 
@@ -320,7 +320,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Diagnóstico electrónico (Cat ET), mantenimiento preventivo y correctivo de motores diésel, sistemas hidráulicos y trenes de fuerza en tractores, excavadoras y camiones mineros.",
             "requirements": "Técnico egresado de SENATI o TECSUP en Mantenimiento de Maquinaria Pesada. Experiencia en talleres o mina. Licencia de conducir AI mínimo.",
-            "contact": "https://ferreyros.evaluar.com/",
+            "contact": "https://www.ferreycorp.com.pe/",
             "tools": ["Cat ET", "Hidráulica", "Motores Diésel", "SENATI / TECSUP"]
         },
         {
@@ -332,7 +332,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Montaje, cableado y comisionamiento de tableros eléctricos de fuerza y control, programación básica de variadores de frecuencia y PLCs Siemens / Schneider.",
             "requirements": "Técnico en Electricidad Industrial o Electrotecnia (SENATI). Lectura experta de planos eléctricos en AutoCAD. Disponibilidad para realizar servicios técnicos.",
-            "contact": "https://new.abb.com/pe/carreras",
+            "contact": "https://pe.computrabajo.com/empresas/empleos-en-abb-sa",
             "tools": ["AutoCAD Eléctrico", "PLC Siemens", "Tableros Eléctricos", "SENATI"]
         },
         {
@@ -344,7 +344,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Atención y orientación al cliente, dispensación de medicamentos según receta médica, control de inventario y buenas prácticas de almacenamiento (BPA).",
             "requirements": "Técnico Titulado o Egresado en Farmacia y Bioquímica. Vocación de servicio y disponibilidad para turnos rotativos.",
-            "contact": "https://inretailpharma.evaluar.com/",
+            "contact": "https://www.inretail.pe/",
             "tools": ["BPA", "Farmacología", "Atención al Cliente"]
         },
         {
@@ -356,7 +356,7 @@ def get_agro_and_specialized_professions_jobs():
             "contract_type": "Tiempo Completo",
             "description": "Ejecución de trabajos de soldadura de tuberías y estructuras sometidas a alta presión y temperatura en planta siderúrgica. Homologación bajo código ASME Sección IX y AWS D1.1.",
             "requirements": "Técnico en Soldadura Universal o Estructuras Metálicas (SENATI). Homologación vigente 3G/4G/6G. Mínimo 2 años en plantas industriales.",
-            "contact": "https://siderperu.com.pe/trabaja-con-nosotros/",
+            "contact": "https://www.siderperu.com.pe/",
             "tools": ["Soldadura 6G", "SMAW/TIG", "Norma AWS", "SENATI"]
         }
     ]

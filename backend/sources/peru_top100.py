@@ -768,7 +768,7 @@ TOP_100_PERU = [
     {
         "company": "Aenza (ex Graña y Montero)",
         "sector": "Construcción y Maquinaria",
-        "url": "https://aenza.com.pe/trabaja-con-nosotros",
+        "url": "https://aenza.hiringroom.com/jobs",
         "logo": "",
         "roles": [
             ("Ingeniero Residente de Obra Civil", "Dirección técnica de obras viales, saneamiento y edificaciones."),
@@ -778,7 +778,7 @@ TOP_100_PERU = [
     {
         "company": "Cosapi",
         "sector": "Construcción y Maquinaria",
-        "url": "https://cosapi.com.pe/trabaja-con-nosotros",
+        "url": "https://www.cosapi.com.pe/",
         "logo": "",
         "roles": [
             ("Ingeniero de Calidad / QA-QC", "Gestión de protocolos de liberación de concreto y estructuras metálicas."),
@@ -797,7 +797,7 @@ TOP_100_PERU = [
     {
         "company": "Los Portales",
         "sector": "Construcción y Maquinaria",
-        "url": "https://losportales.pe/trabaja-con-nosotros",
+        "url": "https://www.losportales.com.pe/",
         "logo": "",
         "roles": [
             ("Asesor Inmobiliario de Terrenos y Viviendas", "Venta de lotes urbanizados y departamentos en proyectos a nivel nacional."),
@@ -816,7 +816,7 @@ TOP_100_PERU = [
     {
         "company": "Inversiones Centenario",
         "sector": "Construcción y Maquinaria",
-        "url": "https://grupo-centenario.com/trabaja-con-nosotros",
+        "url": "https://centenario.com.pe/",
         "logo": "",
         "roles": [
             ("Analista de Desarrollo Inmobiliario", "Evaluación de terrenos, cabidas arquitectónicas y factibilidad urbana.")

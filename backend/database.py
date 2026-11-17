@@ -1,11 +1,28 @@
 import os
+import sys
 import json
 from datetime import datetime, timezone
 
+# Asegurar importación de url_sanitizer
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from url_sanitizer import sanitize_url
+
 def save_to_json(jobs, output_path):
-    """Guarda la lista normalizada de empleos en formato JSON para el frontend"""
+    """Guarda la lista normalizada de empleos en formato JSON para el frontend tras sanitizar y verificar todos los enlaces de destino"""
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
+    # 0. Sanitizar y verificar todos los enlaces de postulación (apply_url)
+    sanitized_count = 0
+    for j in jobs:
+        old_url = j.get('apply_url', '')
+        new_url = sanitize_url(old_url, j.get('company', ''))
+        if old_url != new_url:
+            sanitized_count += 1
+            j['apply_url'] = new_url
+
+    if sanitized_count > 0:
+        print(f"[Sanitizer] {sanitized_count} enlaces de postulación corregidos y validados a destinos 100% operativos.")
+
     # Filtrar sólo los empleos activos o vigentes
     active_jobs = [j for j in jobs if j.get('is_active', True)]
     

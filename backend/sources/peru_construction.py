@@ -12,7 +12,7 @@ CONSTRUCTION_COMPANIES = [
     # ---------------------------------------------------------------------
     {
         "company": "Cosapi",
-        "url": "https://cosapi.com.pe/trabaja-con-nosotros",
+        "url": "https://www.cosapi.com.pe/",
         "roles": [
             ("Ingeniero de Campo / Movimiento de Tierras", "Supervisión de frentes de excavación, terraplenes y control topográfico en proyectos viales y mineros."),
             ("Ingeniero de Calidad y Protocolos (QA/QC)", "Liberación de vaciados de concreto, inspección de soldadura y aseguramiento de calidad."),
@@ -21,7 +21,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Aenza (Cumbra / VIVA)",
-        "url": "https://aenza.com.pe/trabaja-con-nosotros",
+        "url": "https://aenza.hiringroom.com/jobs",
         "roles": [
             ("Ingeniero Residente de Infraestructura y Obras Viales", "Dirección técnica y administrativa de contratos de ingeniería y construcción pesada."),
             ("Especialista en Costos, Presupuestos y Valorizaciones S10", "Elaboración de valorizaciones mensuales, ampliaciones de plazo y metrados.")
@@ -37,7 +37,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "San Martín Contratistas Generales",
-        "url": "https://smcgl.com/trabaja-con-nosotros",
+        "url": "https://sanmartinperu.pe/",
         "roles": [
             ("Operador de Pala Hidráulica y Cargador Frontal", "Movimiento masivo de tierras en unidades mineras a tajo abierto con régimen atípico."),
             ("Supervisor de Mantenimiento de Maquinaria Pesada", "Planificación de mantenimientos preventivos de flota de línea amarilla.")
@@ -45,7 +45,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Grupo JJC",
-        "url": "https://jjc.com.pe/trabaja-con-nosotros",
+        "url": "https://www.jjc.com.pe/",
         "roles": [
             ("Ingeniero de Planeamiento y Control de Proyectos (Primavera P6)", "Seguimiento de cronogramas ganados, curvas S y desvíos de plazo."),
             ("Topógrafo General de Obras Viales", "Levantamiento y replanteo con estación total y GPS diferencial.")
@@ -53,7 +53,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Stracon",
-        "url": "https://stracon.com/unete-al-equipo",
+        "url": "https://stracon.com/",
         "roles": [
             ("Ingeniero de Geotecnia y Estabilidad de Taludes", "Monitoreo de prismas e instrumentación geotécnica en operaciones mineras."),
             ("Operador de Tractor de Oruga CAT D8/D9", "Corte y conformación de plataformas mineras y botaderos.")
@@ -61,7 +61,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Mota-Engil Perú",
-        "url": "https://mota-engil.pe/carreras",
+        "url": "https://www.mota-engil.pe/",
         "roles": [
             ("Ingeniero de Túneles y Obras Subterráneas", "Perforación y voladura, sostenimiento con pernos y shotcrete en proyectos hidroeléctricos y viales."),
             ("Jefe de Topografía", "Control geométrico de galerías y obras de arte.")
@@ -69,28 +69,28 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Sacyr Perú",
-        "url": "https://www.sacyr.com/talento",
+        "url": "https://www.sacyr.com/",
         "roles": [
             ("Ingeniero de Conservación y Mantenimiento Vial", "Gestión de contratos de concesiones viales e intervenciones rutinarias y periódicas.")
         ]
     },
     {
         "company": "OHLA Perú",
-        "url": "https://ohla-group.com/talento",
+        "url": "https://ohla-group.com/",
         "roles": [
             ("Ingeniero Estructural de Puentes y Viaductos", "Montaje de vigas postensadas y estructuras de concreto armado.")
         ]
     },
     {
         "company": "De Vicente Constructora (DVC)",
-        "url": "https://dvc.com.pe/trabaja-con-nosotros",
+        "url": "https://pe.computrabajo.com/empresas/empleos-en-de-vicente-constructora-sac",
         "roles": [
             ("Administrador de Obra / Jefe Administrativo", "Gestión de compras locales, almacén, planillas de construcción civil y subcontratistas.")
         ]
     },
     {
         "company": "HV Contratistas Generales",
-        "url": "https://hvcontratistas.com.pe/trabaja-con-nosotros",
+        "url": "https://pe.computrabajo.com/empresas/empleos-en-hv-contratistas-sa",
         "roles": [
             ("Ingeniero de Instalaciones Electromecánicas (MEP)", "Supervisión de redes contra incendios, climatización HVAC y subestaciones en edificaciones.")
         ]
@@ -147,7 +147,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "JE Construcciones Generales",
-        "url": "https://je.com.pe/trabaja-con-nosotros",
+        "url": "https://pe.computrabajo.com/empresas/empleos-en-je-construcciones-generales-sa",
         "roles": [
             ("Ingeniero de Obras Hidráulicas y Saneamiento", "Supervisión de colectores primarios, plantas de tratamiento PTAR y reservorios.")
         ]
@@ -168,7 +168,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Mastercom",
-        "url": "https://mastercom.com.pe/trabaja-con-nosotros",
+        "url": "https://pe.computrabajo.com/empresas/empleos-en-mastercom-peru-sac",
         "roles": [
             ("Técnico de Redes y Telecomunicaciones en Infraestructura", "Tendido de cableado estructurado y canalizaciones.")
         ]
@@ -200,7 +200,7 @@ CONSTRUCTION_COMPANIES = [
     # ---------------------------------------------------------------------
     {
         "company": "Los Portales",
-        "url": "https://losportales.pe/trabaja-con-nosotros",
+        "url": "https://www.losportales.com.pe/",
         "roles": [
             ("Asesor Comercial de Lotes Urbanizados", "Venta de terrenos y proyectos de vivienda en Lima, Piura, Chiclayo, Trujillo e Ica."),
             ("Supervisor de Atención al Cliente y Postventa", "Recepción de departamentos, subsanación de observaciones y entrega de llaves.")
@@ -208,7 +208,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Grupo Centenario",
-        "url": "https://grupo-centenario.com/trabaja-con-nosotros",
+        "url": "https://centenario.com.pe/",
         "roles": [
             ("Analista de Desarrollo y Nuevos Negocios Inmobiliarios", "Evaluación financiera de proyectos residenciales, oficinas prime y centros comerciales."),
             ("Ejecutivo Comercial de Urbanizaciones", "Comercialización de macrolotes y lotes residenciales.")
@@ -272,7 +272,7 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Actual Inmobiliaria",
-        "url": "https://actual.pe/trabaja-con-nosotros",
+        "url": "https://actualinmobiliaria.com.pe/",
         "roles": [
             ("Asesor de Experiencia del Cliente Inmobiliario", "Acompañamiento en el proceso de titulación y entrega de departamentos.")
         ]
@@ -307,14 +307,14 @@ CONSTRUCTION_COMPANIES = [
     },
     {
         "company": "Albamar Grupo Inmobiliario",
-        "url": "https://albamar.com.pe/trabaja-con-nosotros",
+        "url": "https://www.albamar.com/",
         "roles": [
             ("Asesor Inmobiliario", "Venta de departamentos en Jesús María, Magdalena, Lince y San Miguel.")
         ]
     },
     {
         "company": "Cantabria Inmobiliaria",
-        "url": "https://cantabriainmobiliaria.com/trabaja-con-nosotros",
+        "url": "https://cantabriainmobiliaria.pe/",
         "roles": [
             ("Ejecutivo de Negocios Inmobiliarios", "Asesoría en financiamiento bancario hipotecario.")
         ]
