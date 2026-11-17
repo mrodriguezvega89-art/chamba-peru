@@ -52,6 +52,7 @@ export default function App() {
   const [selectedSector, setSelectedSector] = useState('ALL');
   const [selectedLocation, setSelectedLocation] = useState('ALL');
   const [onlyWithSalary, setOnlyWithSalary] = useState(false);
+  const [onlyActive, setOnlyActive] = useState(true); // Filtro estricto: Solo vacantes vigentes por defecto
   const [onlySaved, setOnlySaved] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [highlightedJobId, setHighlightedJobId] = useState(null);
@@ -261,14 +262,21 @@ export default function App() {
   // Reiniciar paginación al cambiar filtros
   useEffect(() => {
     setVisibleCount(30);
-  }, [searchTerm, selectedSector, selectedLocation, onlyWithSalary, onlySaved]);
+  }, [searchTerm, selectedSector, selectedLocation, onlyWithSalary, onlyActive, onlySaved]);
 
   // Búsqueda inteligente multi-palabra y en todo el texto (Full-Text Search)
   const filteredJobs = useMemo(() => {
     const queryTokens = normalize(searchTerm).split(' ').filter(Boolean);
+    const todayStr = new Date().toISOString().split('T')[0];
 
     return jobs.filter((job) => {
-      // 0. Filtro de guardados
+      // 0. Filtro estricto de solo vacantes vigentes
+      if (onlyActive) {
+        if (job.is_active === false) return false;
+        if (job.expires_at && job.expires_at < todayStr) return false;
+      }
+
+      // 0.1 Filtro de guardados
       if (onlySaved && !savedJobs.includes(job.id)) return false;
 
       // 1. Crear documento compuesto con TODO el texto del empleo
@@ -327,7 +335,7 @@ export default function App() {
       if (!a.is_featured && b.is_featured) return 1;
       return new Date(b.published_at || 0) - new Date(a.published_at || 0);
     });
-  }, [jobs, searchTerm, selectedSector, selectedLocation, onlyWithSalary, onlySaved, savedJobs]);
+  }, [jobs, searchTerm, selectedSector, selectedLocation, onlyWithSalary, onlyActive, onlySaved, savedJobs]);
 
   // Lista visible paginada
   const displayedJobs = useMemo(() => {
@@ -582,6 +590,20 @@ export default function App() {
 
               <span className="text-slate-600 hidden sm:inline">|</span>
 
+              {/* Botón Filtro Estricto: Solo Vacantes Vigentes */}
+              <button
+                onClick={() => setOnlyActive(!onlyActive)}
+                className={`px-3 py-1 rounded-full font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                  onlyActive 
+                    ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs' 
+                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                }`}
+                title="Filtrar estrictamente solo convocatorias vigentes y abiertas"
+              >
+                <span className={`w-2 h-2 rounded-full ${onlyActive ? 'bg-slate-950 animate-pulse' : 'bg-slate-500'}`}></span>
+                <span>🟢 {onlyActive ? 'Solo Vigentes' : 'Mostrar Todas'}</span>
+              </button>
+
               <button
                 onClick={() => setOnlyWithSalary(!onlyWithSalary)}
                 className={`px-3 py-1 rounded-full font-medium transition-all flex items-center gap-1 cursor-pointer ${
@@ -602,10 +624,16 @@ export default function App() {
       <main className="max-w-5xl mx-auto px-4 py-8 flex-1 w-full">
         {/* Barra de estado y contador de resultados */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-3 border-b border-slate-200 mb-6">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-bold text-slate-900">
-              {filteredJobs.length} {filteredJobs.length === 1 ? 'vacante disponible' : 'vacantes disponibles'}
+              {filteredJobs.length} {filteredJobs.length === 1 ? 'vacante' : 'vacantes'}
             </h2>
+            {onlyActive && (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                <span>🟢 Solo Vigentes</span>
+              </span>
+            )}
             {searchTerm && (
               <span className="text-xs text-slate-500">
                 para: <strong className="text-slate-700">"{searchTerm}"</strong>
@@ -747,6 +775,34 @@ export default function App() {
                         🩺 Colegio Médico (CMP)
                       </span>
                     )}
+
+                    {/* Badge de Vigencia Oficial */}
+                    {(() => {
+                      const todayStr = new Date().toISOString().split('T')[0];
+                      const isExpired = (job.expires_at && job.expires_at < todayStr) || job.is_active === false;
+                      if (isExpired) {
+                        return (
+                          <span className="text-[11px] font-bold text-rose-800 bg-rose-50 px-2 py-0.5 rounded border border-rose-200 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                            <span>Finalizada</span>
+                          </span>
+                        );
+                      }
+                      if (job.expires_at) {
+                        return (
+                          <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>🟢 Vigente hasta {job.expires_at}</span>
+                          </span>
+                        );
+                      }
+                      return (
+                        <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          <span>🟢 Vigente</span>
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   {/* Título Exacto del Puesto */}
@@ -797,14 +853,14 @@ export default function App() {
                       </span>
                     )}
 
-                    {job.expires_at ? (
-                      <span className="text-amber-700 font-medium bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                        ⏳ {job.expires_at}
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-slate-400">
-                        <Clock className="w-3.5 h-3.5 shrink-0" />
-                        <span itemProp="datePosted">{formatDate(job.published_at)}</span>
+                    <span className="flex items-center gap-1 text-slate-400">
+                      <Clock className="w-3.5 h-3.5 shrink-0" />
+                      <span itemProp="datePosted">Pub: {formatDate(job.published_at)}</span>
+                    </span>
+
+                    {job.expires_at && (
+                      <span className="text-amber-800 font-medium bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                        ⏳ Cierre: {job.expires_at}
                       </span>
                     )}
                   </div>

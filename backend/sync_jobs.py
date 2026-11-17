@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from sources.peru_public import get_peru_public_jobs
+from sources.peru_government_portals import get_all_government_portal_jobs
 from sources.peru_private import get_peru_private_jobs
 from sources.peru_top100 import get_top100_jobs
 from sources.peru_construction import get_construction_realestate_jobs
@@ -48,6 +49,13 @@ def run_synchronization():
         all_jobs.extend(public_jobs)
     except Exception as e:
         print(f"[Error] Falló la extracción pública: {e}")
+
+    # 1.1 Portales Oficiales del Estado (SERVIR Talento Perú, MTC CAS, MVCS CAC, PNSU, MVCS Conperne, MVCS Requerimientos)
+    try:
+        gov_jobs = get_all_government_portal_jobs()
+        all_jobs.extend(gov_jobs)
+    except Exception as e:
+        print(f"[Error] Falló la extracción de portales oficiales del Estado: {e}")
 
     # 2. Empresas privadas de Perú (CIP Lima, Delosi Starbucks/KFC, TYPSA, etc.)
     try:
@@ -91,7 +99,24 @@ def run_synchronization():
     except Exception as e:
         print(f"[Error] Falló la extracción ATS: {e}")
 
-    # 4. Deduplicación por hash de empleo
+    # 4. Normalización estricta de vigencia por fecha de vencimiento
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    for j in all_jobs:
+        exp = j.get('expires_at')
+        if exp:
+            # Normalizar si viene en formato DD/MM/AAAA
+            if '/' in exp:
+                parts = exp.split('/')
+                if len(parts) == 3:
+                    try:
+                        exp = f"{parts[2]}-{int(parts[1]):02d}-{int(parts[0]):02d}"
+                        j['expires_at'] = exp
+                    except Exception:
+                        pass
+            if exp < today_str:
+                j['is_active'] = False
+
+    # 5. Deduplicación por hash de empleo
     unique_jobs = {}
     for j in all_jobs:
         jid = j.get('id')
