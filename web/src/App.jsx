@@ -101,6 +101,7 @@ export default function App() {
   const [selectedSoftware, setSelectedSoftware] = useState('ALL');
   const [selectedLocation, setSelectedLocation] = useState('ALL');
   const [onlyWithSalary, setOnlyWithSalary] = useState(false);
+  const [includePublicSector, setIncludePublicSector] = useState(false); // Por defecto DESACTIVADO: Requiere activar 'Trabajar con el Estado'
   const [onlyActive, setOnlyActive] = useState(true); // Filtro estricto: Solo vacantes vigentes por defecto
   const [onlySaved, setOnlySaved] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
@@ -311,7 +312,7 @@ export default function App() {
   // Reiniciar paginación al cambiar filtros
   useEffect(() => {
     setVisibleCount(30);
-  }, [searchTerm, selectedSector, selectedSoftware, selectedLocation, onlyWithSalary, onlyActive, onlySaved]);
+  }, [searchTerm, selectedSector, selectedSoftware, selectedLocation, onlyWithSalary, onlyActive, includePublicSector, onlySaved]);
 
   // Búsqueda inteligente multi-palabra y en todo el texto (Full-Text Search) con Expansión Semántica
   const filteredJobs = useMemo(() => {
@@ -325,7 +326,23 @@ export default function App() {
         if (job.expires_at && job.expires_at < todayStr) return false;
       }
 
-      // 0.1 Filtro de guardados
+      // 0.1 Filtro: Trabajar con el Estado (Desactivado por defecto a petición del usuario)
+      const isPublicJob = job.sector === 'Sector Público' || 
+        (job.source && (
+          job.source.includes('Convocatorias') || 
+          job.source.includes('SERVIR') || 
+          job.source.includes('MTC') || 
+          job.source.includes('MVCS') || 
+          job.source.includes('PNSU') || 
+          job.source.includes('Gobierno')
+        )) || 
+        (job.tags || []).includes('Sector Público');
+
+      if (!includePublicSector && isPublicJob) {
+        return false;
+      }
+
+      // 0.2 Filtro de guardados
       if (onlySaved && !savedJobs.includes(job.id)) return false;
 
       // 1. Crear documento compuesto con TODO el texto del empleo
@@ -420,7 +437,7 @@ export default function App() {
       if (!a.is_featured && b.is_featured) return 1;
       return new Date(b.published_at || 0) - new Date(a.published_at || 0);
     });
-  }, [jobs, searchTerm, selectedSector, selectedSoftware, selectedLocation, onlyWithSalary, onlyActive, onlySaved, savedJobs]);
+  }, [jobs, searchTerm, selectedSector, selectedSoftware, selectedLocation, onlyWithSalary, onlyActive, includePublicSector, onlySaved, savedJobs]);
 
   // Lista visible paginada
   const displayedJobs = useMemo(() => {
@@ -626,7 +643,12 @@ export default function App() {
               {sectorList.map((sec) => (
                 <button
                   key={sec.id}
-                  onClick={() => setSelectedSector(selectedSector === sec.id ? 'ALL' : sec.id)}
+                  onClick={() => {
+                    if (sec.id === 'Sector Público') {
+                      setIncludePublicSector(true);
+                    }
+                    setSelectedSector(selectedSector === sec.id ? 'ALL' : sec.id);
+                  }}
                   className={`px-3 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                     selectedSector === sec.id
                       ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400/50'
@@ -711,6 +733,25 @@ export default function App() {
 
               <span className="text-slate-600 hidden sm:inline">|</span>
 
+              {/* Botón Filtro: Activar Trabajar con el Estado */}
+              <button
+                onClick={() => setIncludePublicSector(!includePublicSector)}
+                className={`px-3.5 py-1 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer text-xs ${
+                  includePublicSector 
+                    ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300' 
+                    : 'bg-slate-800/90 text-amber-300/90 border border-amber-500/50 hover:bg-amber-950/40 hover:text-white'
+                }`}
+                title={includePublicSector ? "Convocatorias del Estado activadas. Clic para ocultar." : "Por defecto desactivado. Clic para activar ofertas del Estado."}
+              >
+                <span>🏛️</span>
+                <span>{includePublicSector ? 'Trabajar con el Estado (Activado)' : 'Activar Trabajar con el Estado'}</span>
+                {includePublicSector ? (
+                  <span className="text-[10px] bg-slate-950/20 px-1.5 py-0.2 rounded-full font-extrabold">ON</span>
+                ) : (
+                  <span className="text-[10px] bg-amber-400/20 text-amber-300 px-1.5 py-0.2 rounded-full border border-amber-400/30">OFF</span>
+                )}
+              </button>
+
               {/* Botón Filtro Estricto: Solo Vacantes Vigentes */}
               <button
                 onClick={() => setOnlyActive(!onlyActive)}
@@ -749,6 +790,25 @@ export default function App() {
             <h2 className="text-lg font-bold text-slate-900">
               {filteredJobs.length} {filteredJobs.length === 1 ? 'vacante' : 'vacantes'}
             </h2>
+            {includePublicSector ? (
+              <button
+                onClick={() => setIncludePublicSector(false)}
+                className="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 cursor-pointer hover:bg-amber-200 transition-colors"
+                title="Clic para ocultar convocatorias del Estado y mostrar solo sector privado"
+              >
+                <span>🏛️ Convocatorias Estado: Activadas</span>
+                <span className="text-[10px] text-amber-800 underline ml-0.5 font-semibold">(ocultar)</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIncludePublicSector(true)}
+                className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-300 flex items-center gap-1 cursor-pointer hover:bg-slate-200 transition-colors"
+                title="Clic para activar convocatorias del Estado (CAS, MTC, MVCS, SERVIR)"
+              >
+                <span>🏢 Solo Sector Privado</span>
+                <span className="text-[10px] text-blue-700 underline ml-0.5 font-semibold">(+ activar Estado)</span>
+              </button>
+            )}
             {onlyActive && (
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
@@ -775,9 +835,14 @@ export default function App() {
             )}
           </div>
 
-          <div className="text-xs text-slate-500 flex items-center gap-2">
-            <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Última sincronización automática: {metadata?.last_updated ? new Date(metadata.last_updated).toLocaleDateString('es-PE', { hour: '2-digit', minute: '2-digit' }) : 'Hoy'}</span>
+          <div className="text-xs text-slate-500 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
+              <span>Actualización cada 6h (6am, 12pm, 6pm, 12am)</span>
+            </div>
+            {metadata?.last_updated && (
+              <span className="hidden md:inline text-slate-400">• Sincronizado: {new Date(metadata.last_updated).toLocaleDateString('es-PE', { hour: '2-digit', minute: '2-digit' })}</span>
+            )}
           </div>
         </div>
 
@@ -1592,7 +1657,7 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
                 todoventasperu@outlook.com.pe
               </a>
               <span>•</span>
-              <span>Actualización Diaria</span>
+              <span>Actualización cada 6h (6am, 12pm, 6pm, 12am)</span>
               <span>•</span>
               <span>Perú 2026</span>
             </div>

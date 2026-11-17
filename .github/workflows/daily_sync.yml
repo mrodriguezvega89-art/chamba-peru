@@ -1,9 +1,9 @@
-name: Sincronización Diaria de Empleos Perú
+name: Sincronización Automática cada 6 horas - Empleos Perú
 
 on:
   schedule:
-    # Se ejecuta todos los días a las 11:00 UTC (6:00 AM hora de Perú)
-    - cron: '0 11 * * *'
+    # Se ejecuta cada 6 horas: 6:00 AM, 12:00 PM, 6:00 PM, 12:00 AM (Medianoche) hora de Perú (UTC-5 -> 11:00, 17:00, 23:00, 05:00 UTC)
+    - cron: '0 5,11,17,23 * * *'
   workflow_dispatch: # Permite ejecutarlo manualmente con un clic en GitHub Actions
 
 permissions:
@@ -38,4 +38,4 @@ jobs:
           git config --local user.email "bot@chambaperu.dev"
           git config --local user.name "ChambaPeru Automation Bot"
           git add web/public/data/jobs.json web/public/sitemap.xml web/public/robots.txt
-          git diff --staged --quiet || (git commit -m "chore(sync): actualización automática diaria de ofertas" && git push)
+          git diff --staged --quiet || (git commit -m "chore(sync): sincronización automática cada 6h (6am, 12pm, 6pm, 12am Perú)" && git push)
