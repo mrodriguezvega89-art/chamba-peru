@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "last_updated": "2026-11-17T19:55:01.532317+00:00",
+    "last_updated": "2026-11-17T20:13:13.507921+00:00",
     "total_jobs": 2270,
-    "total_active": 2238,
+    "total_active": 2239,
     "sources": [
       "MVCS - Conperne (PNVR)",
       "Trabaja con Nosotros (Grupo Gloria)",
@@ -233,6 +233,28 @@
     ]
   },
   "jobs": [
+    {
+      "id": "46ebce01ec04958f",
+      "title": "Cadista",
+      "company": "COPINSA INGENIEROS SAC",
+      "location": "Lima - Remoto",
+      "salary": "S/ 1,500 - S/ 2,500 Mensual (Según Evaluación)",
+      "contract_type": "Tiempo Completo",
+      "sector": "Construcción e Ingeniería",
+      "description": "Realizar planos de diferentes especialidades para viviendas, trámites municipales, declaratorias de fábrica.\n\nRequisitos:\nExperiencia mínima de 01 año. Técnico, Bachiller de Ingeniería Civil o Arquitectura. Manejo de AutoCAD, Civil 3D, Revit. Evaluación de conocimientos. Se priorizarán los candidatos con manejo de ETABS.",
+      "apply_url": "mailto:copinsa.ingenieros@gmail.com?subject=Postulaci%C3%B3n%20para%20Cadista",
+      "source": "Vacante Destacada Oficial",
+      "published_at": "2026-11-17",
+      "expires_at": "2026-12-02",
+      "is_active": true,
+      "is_featured": true,
+      "tags": [
+        "Destacada",
+        "Verificada",
+        "1ra Gratis (15 días)",
+        "Construcción e Ingeniería"
+      ]
+    },
     {
       "id": "a28a551ba9719a0d",
       "title": "para Practicante en el Dpto. de Supervisión del Sistema Nacional de Pagos",
