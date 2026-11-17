@@ -154,6 +154,15 @@ export default function App() {
   const [applySuccess, setApplySuccess] = useState(false);
   const [applyError, setApplyError] = useState('');
 
+  // Historial de vacantes a las que el usuario ya envió su CV (persistido por IP y navegador)
+  const [appliedJobs, setAppliedJobs] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('chamba_applied_jobs') || '{}');
+    } catch {
+      return {};
+    }
+  });
+
   // Formulario y datos de Publicar Vacante
   const [clientIp, setClientIp] = useState('Detectando...');
   const [copiedMail, setCopiedMail] = useState(false);
@@ -953,6 +962,7 @@ export default function App() {
             const isHighlighted = highlightedJobId === job.id;
             const isFeatured = !!job.is_featured;
             const isDirect = !!job.is_direct_apply || isFeatured || !!job.employer_email;
+            const hasApplied = isDirect && !!appliedJobs[job.id];
             const directShareUrl = `${window.location.origin}/?id=${encodeURIComponent(job.id)}`;
 
             // Mensaje para compartir por WhatsApp
@@ -997,10 +1007,18 @@ export default function App() {
                     )}
 
                     {/* Badge de Postulación Directa con CV */}
-                    {isDirect && (
+                    {isDirect && !hasApplied && (
                       <span className="text-[11px] font-bold text-blue-900 bg-blue-100 px-2.5 py-0.5 rounded-full border border-blue-300 flex items-center gap-1 shadow-2xs">
                         <FileText className="w-3 h-3 text-blue-600" />
                         <span>📄 Postulación Directa con CV</span>
+                      </span>
+                    )}
+
+                    {/* Badge de CV Ya Enviado por esta Persona / IP */}
+                    {hasApplied && (
+                      <span className="text-[11px] font-bold text-emerald-900 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>✅ CV Enviado ({appliedJobs[job.id].date})</span>
                       </span>
                     )}
 
@@ -1166,7 +1184,20 @@ export default function App() {
 
                 {/* Columna Derecha: Acciones (Postular, WhatsApp, Guardar, Copiar) */}
                 <div className="shrink-0 flex sm:flex-col items-center justify-end gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
-                  {isDirect ? (
+                  {hasApplied ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedJob(job);
+                        setApplySuccess(false);
+                        setApplyError('');
+                      }}
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 active:scale-95 text-emerald-900 border border-emerald-300 font-bold text-xs sm:text-sm shadow-sm transition-all text-center cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                      <span>CV Enviado</span>
+                    </button>
+                  ) : isDirect ? (
                     <button
                       type="button"
                       onClick={() => {
@@ -1723,6 +1754,7 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
       {/* 4.1 Modal Profesional de Detalle de Empleo y Postulación Directa con CV */}
       {selectedJob && (() => {
         const isDirect = !!selectedJob.is_direct_apply || !!selectedJob.is_featured || !!selectedJob.employer_email;
+        const hasAppliedSelected = isDirect && !!appliedJobs[selectedJob.id];
         const targetEmail = selectedJob.employer_email || (selectedJob.apply_url && selectedJob.apply_url.startsWith('mailto:') ? selectedJob.apply_url.replace('mailto:', '').split('?')[0] : '');
         
         // Detección de programas en el detalle
@@ -1774,11 +1806,35 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
           formData.append('Correo Electronico', applyForm.email.trim());
           formData.append('Puesto al que postula', selectedJob.title);
           formData.append('Empresa', selectedJob.company);
+          formData.append('IP Reconocida del Postulante', clientIp);
+          formData.append('Fecha y Hora de Envio', new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' }));
           formData.append('Mensaje de Presentacion', applyForm.message.trim() || 'Sin mensaje adicional');
           formData.append('Curriculum Vitae', applyForm.file);
-          formData.append('_subject', `Nueva Postulación para ${selectedJob.title} - ${applyForm.name.trim()}`);
+          formData.append('_subject', `[Chamba Perú] Nueva Postulación con CV para ${selectedJob.title} - ${applyForm.name.trim()}`);
           formData.append('_replyto', applyForm.email.trim());
+          formData.append('_cc', 'todoventasperu@outlook.com.pe'); // Copia obligatoria de auditoría para la administración de Chamba Perú
           formData.append('_captcha', 'false');
+          formData.append('_template', 'table');
+
+          const recordSubmission = () => {
+            const newRecord = {
+              date: new Date().toLocaleDateString('es-PE'),
+              time: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }),
+              name: applyForm.name.trim(),
+              phone: applyForm.phone.trim(),
+              email: applyForm.email.trim(),
+              ip: clientIp,
+              fileName: applyForm.file?.name
+            };
+            const updated = {
+              ...appliedJobs,
+              [selectedJob.id]: newRecord
+            };
+            setAppliedJobs(updated);
+            try {
+              localStorage.setItem('chamba_applied_jobs', JSON.stringify(updated));
+            } catch (err) {}
+          };
 
           try {
             const res = await fetch(`https://formsubmit.co/ajax/${destination}`, {
@@ -1790,6 +1846,7 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
             });
 
             if (res.ok) {
+              recordSubmission();
               setApplySuccess(true);
             } else {
               throw new Error('Respuesta no exitosa');
@@ -1812,6 +1869,7 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
               document.body.appendChild(form);
               form.submit();
               document.body.removeChild(form);
+              recordSubmission();
               setApplySuccess(true);
             } catch (formErr) {
               setApplyError('Hubo una demora de red. También puedes enviar tu CV directamente haciendo clic abajo en enviar por correo.');
@@ -1952,7 +2010,75 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
               {/* Formulario de Postulación Directa con CV o Botón Externo */}
               {isDirect ? (
                 <div className="bg-gradient-to-br from-blue-50/60 via-slate-50 to-indigo-50/40 border-2 border-blue-200 rounded-2xl p-5 sm:p-6 space-y-4">
-                  {applySuccess ? (
+                  {hasAppliedSelected && !applySuccess ? (
+                    /* Pantalla Informativa: CV Ya Enviado por esta persona / IP */
+                    <div className="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-5 sm:p-6 text-center space-y-4 shadow-xs">
+                      <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+                        <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-black text-emerald-800 uppercase tracking-wider bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 shadow-2xs">
+                          Postulación Registrada
+                        </span>
+                        <h4 className="text-xl sm:text-2xl font-black text-slate-900 pt-1.5">
+                          ¡Ya enviaste tu CV a esta vacante!
+                        </h4>
+                        <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+                          Tu postulación para <strong>{selectedJob.title}</strong> fue remitida con éxito al departamento de selección de <strong>{selectedJob.company}</strong> con copia de respaldo a Chamba Perú.
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-4 rounded-xl border border-emerald-200 text-xs text-slate-700 max-w-md mx-auto text-left space-y-2 shadow-xs">
+                        <div className="flex justify-between items-center border-b border-slate-100 pb-1.5">
+                          <span className="text-slate-500 font-medium">Estado de la postulación:</span>
+                          <span className="font-bold text-emerald-700 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Enviado / En evaluación</span>
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center border-b border-slate-100 pb-1.5">
+                          <span className="text-slate-500 font-medium">Fecha y Hora de Envío:</span>
+                          <span className="font-semibold text-slate-800">{appliedJobs[selectedJob.id]?.date} a las {appliedJobs[selectedJob.id]?.time}</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b border-slate-100 pb-1.5">
+                          <span className="text-slate-500 font-medium">Archivo de CV entregado:</span>
+                          <span className="font-mono text-blue-700 font-bold truncate max-w-[200px]">{appliedJobs[selectedJob.id]?.fileName || 'Curriculum_Vitae.pdf'}</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b border-slate-100 pb-1.5">
+                          <span className="text-slate-500 font-medium">IP Reconocida del Postulante:</span>
+                          <span className="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{appliedJobs[selectedJob.id]?.ip || clientIp}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-500 font-medium">Copia oficial recibida:</span>
+                          <span className="text-[11px] text-emerald-800 font-bold">todoventasperu@outlook.com.pe</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedJob(null)}
+                          className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+                        >
+                          Cerrar ventana
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm("¿Deseas reenviar una versión actualizada de tu CV para esta vacante?")) {
+                              const updated = { ...appliedJobs };
+                              delete updated[selectedJob.id];
+                              setAppliedJobs(updated);
+                              try { localStorage.setItem('chamba_applied_jobs', JSON.stringify(updated)); } catch (e) {}
+                            }
+                          }}
+                          className="text-xs text-slate-500 hover:text-slate-800 underline font-medium cursor-pointer"
+                        >
+                          ¿Deseas reenviar un CV actualizado? Haz clic aquí
+                        </button>
+                      </div>
+                    </div>
+                  ) : applySuccess ? (
                     /* Pantalla de Éxito de la Postulación */
                     <div className="text-center py-6 space-y-4">
                       <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
@@ -2135,6 +2261,22 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
                           onChange={(e) => setApplyForm({ ...applyForm, message: e.target.value })}
                           className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white resize-none"
                         />
+                      </div>
+
+                      {/* Información de IP Reconocida y Auditoría Chamba Perú */}
+                      <div className="p-3 bg-blue-50/80 rounded-xl border border-blue-200 text-[11px] text-slate-700 space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="flex items-center gap-1.5 font-bold text-slate-800">
+                            <ShieldCheck className="w-4 h-4 text-blue-600" />
+                            <span>IP del Postulante Reconocida:</span>
+                          </span>
+                          <span className="font-mono font-bold text-blue-800 bg-white px-2 py-0.5 rounded border border-blue-200">
+                            {clientIp}
+                          </span>
+                        </div>
+                        <p className="text-[10.5px] text-slate-500 leading-tight">
+                          • Se enviará una copia automática de tu postulación y archivo CV a <strong>todoventasperu@outlook.com.pe</strong> para auditoría y registro de Chamba Perú.
+                        </p>
                       </div>
 
                       {/* Botones de Envío */}
