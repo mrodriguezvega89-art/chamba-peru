@@ -26,7 +26,13 @@ import {
   Copy,
   Smartphone,
   Loader2,
-  HelpCircle
+  HelpCircle,
+  Upload,
+  CheckCircle2,
+  AlertCircle,
+  Calendar,
+  User,
+  Phone
 } from 'lucide-react';
 
 // Función para normalizar texto (sin acentos, minúsculas y sin caracteres raros)
@@ -134,6 +140,19 @@ export default function App() {
   const [onlySaved, setOnlySaved] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [highlightedJobId, setHighlightedJobId] = useState(null);
+
+  // Estado para Modal de Detalle de Empleo y Postulación Directa con CV
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [applyForm, setApplyForm] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    message: '',
+    file: null
+  });
+  const [isApplying, setIsApplying] = useState(false);
+  const [applySuccess, setApplySuccess] = useState(false);
+  const [applyError, setApplyError] = useState('');
 
   // Formulario y datos de Publicar Vacante
   const [clientIp, setClientIp] = useState('Detectando...');
@@ -933,6 +952,7 @@ export default function App() {
             const isSaved = savedJobs.includes(job.id);
             const isHighlighted = highlightedJobId === job.id;
             const isFeatured = !!job.is_featured;
+            const isDirect = !!job.is_direct_apply || isFeatured || !!job.employer_email;
             const directShareUrl = `${window.location.origin}/?id=${encodeURIComponent(job.id)}`;
 
             // Mensaje para compartir por WhatsApp
@@ -973,6 +993,14 @@ export default function App() {
                       <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300 flex items-center gap-1 shadow-2xs">
                         <Sparkles className="w-3 h-3 text-amber-600" />
                         <span>⭐ Destacada en el TOP</span>
+                      </span>
+                    )}
+
+                    {/* Badge de Postulación Directa con CV */}
+                    {isDirect && (
+                      <span className="text-[11px] font-bold text-blue-900 bg-blue-100 px-2.5 py-0.5 rounded-full border border-blue-300 flex items-center gap-1 shadow-2xs">
+                        <FileText className="w-3 h-3 text-blue-600" />
+                        <span>📄 Postulación Directa con CV</span>
                       </span>
                     )}
 
@@ -1038,15 +1066,19 @@ export default function App() {
 
                   {/* Título Exacto del Puesto */}
                   <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
-                    <a
-                      href={job.apply_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedJob(job);
+                        setApplySuccess(false);
+                        setApplyError('');
+                        setApplyForm({ name: '', phone: '', email: '', message: '', file: null });
+                      }}
                       itemProp="title"
-                      className="hover:underline"
+                      className="hover:underline text-left cursor-pointer transition-colors"
                     >
                       {job.title}
-                    </a>
+                    </button>
                   </h3>
 
                   {/* Descripción o Requisitos resumidos */}
@@ -1134,15 +1166,45 @@ export default function App() {
 
                 {/* Columna Derecha: Acciones (Postular, WhatsApp, Guardar, Copiar) */}
                 <div className="shrink-0 flex sm:flex-col items-center justify-end gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
-                  <a
-                    href={job.apply_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-sm shadow-blue-600/20 transition-all text-center"
+                  {isDirect ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedJob(job);
+                        setApplySuccess(false);
+                        setApplyError('');
+                        setApplyForm({ name: '', phone: '', email: '', message: '', file: null });
+                      }}
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-600/25 transition-all text-center cursor-pointer"
+                    >
+                      <FileText className="w-4 h-4" />
+                      <span>Postular con CV</span>
+                    </button>
+                  ) : (
+                    <a
+                      href={job.apply_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-sm shadow-blue-600/20 transition-all text-center"
+                    >
+                      <span>Postular Oficial</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedJob(job);
+                      setApplySuccess(false);
+                      setApplyError('');
+                      setApplyForm({ name: '', phone: '', email: '', message: '', file: null });
+                    }}
+                    className="text-[11px] text-blue-600 hover:text-blue-800 font-semibold hover:underline flex items-center gap-0.5 cursor-pointer"
                   >
-                    <span>Postular Oficial</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                    <span>Ver detalle completo</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
 
                   {/* Acciones Rápidas: WhatsApp, Guardar y Copiar */}
                   <div className="flex items-center gap-1.5 w-full justify-center">
@@ -1652,6 +1714,481 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
                     </div>
                   </div>
                 </form>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* 4.1 Modal Profesional de Detalle de Empleo y Postulación Directa con CV */}
+      {selectedJob && (() => {
+        const isDirect = !!selectedJob.is_direct_apply || !!selectedJob.is_featured || !!selectedJob.employer_email;
+        const targetEmail = selectedJob.employer_email || (selectedJob.apply_url && selectedJob.apply_url.startsWith('mailto:') ? selectedJob.apply_url.replace('mailto:', '').split('?')[0] : '');
+        
+        // Detección de programas en el detalle
+        const detectedSoftware = [];
+        const softwareNames = ['AutoCAD', 'Civil 3D', 'Revit', 'BIM', 'S10', 'Primavera P6', 'SAP2000', 'ETABS', 'ArcGIS', 'QGIS', 'WaterCAD', 'Power BI', 'SAP', 'Python', 'SQL', 'SolidWorks', 'CONCAR'];
+        const fullText = `${selectedJob.title} ${selectedJob.description} ${selectedJob.requirements || ''} ${selectedJob.responsibilities || ''} ${(selectedJob.tags || []).join(' ')} ${(selectedJob.tools || []).join(' ')}`.toLowerCase();
+        for (const sw of softwareNames) {
+          if (fullText.includes(sw.toLowerCase()) && !detectedSoftware.includes(sw)) {
+            detectedSoftware.push(sw);
+          }
+        }
+
+        // Requisitos formateados en lista
+        let reqList = [];
+        if (selectedJob.requirements) {
+          reqList = selectedJob.requirements
+            .split('\n')
+            .map(r => r.replace(/^[•\-\*]\s*/, '').trim())
+            .filter(r => r.length > 0);
+        } else if (selectedJob.description && selectedJob.description.includes('Requisitos:')) {
+          const parts = selectedJob.description.split('Requisitos:');
+          reqList = parts[1]
+            .split('\n')
+            .map(r => r.replace(/^[•\-\*]\s*/, '').trim())
+            .filter(r => r.length > 0);
+        }
+
+        // Manejador del envío del CV
+        const handleApplySubmit = async (e) => {
+          e.preventDefault();
+          if (!applyForm.name.trim() || !applyForm.phone.trim() || !applyForm.email.trim() || !applyForm.file) {
+            setApplyError('Por favor completa todos los campos obligatorios (*) y adjunta tu archivo de CV.');
+            return;
+          }
+
+          if (applyForm.file.size > 15 * 1024 * 1024) {
+            setApplyError('El archivo del CV supera el límite de 15 MB. Por favor adjunta un archivo en PDF o Word más liviano.');
+            return;
+          }
+
+          setIsApplying(true);
+          setApplyError('');
+
+          const destination = targetEmail || 'copinsa.ingenieros@gmail.com';
+
+          const formData = new FormData();
+          formData.append('Nombre del Postulante', applyForm.name.trim());
+          formData.append('Telefono o WhatsApp', applyForm.phone.trim());
+          formData.append('Correo Electronico', applyForm.email.trim());
+          formData.append('Puesto al que postula', selectedJob.title);
+          formData.append('Empresa', selectedJob.company);
+          formData.append('Mensaje de Presentacion', applyForm.message.trim() || 'Sin mensaje adicional');
+          formData.append('Curriculum Vitae', applyForm.file);
+          formData.append('_subject', `Nueva Postulación para ${selectedJob.title} - ${applyForm.name.trim()}`);
+          formData.append('_replyto', applyForm.email.trim());
+          formData.append('_captcha', 'false');
+
+          try {
+            const res = await fetch(`https://formsubmit.co/ajax/${destination}`, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json'
+              },
+              body: formData
+            });
+
+            if (res.ok) {
+              setApplySuccess(true);
+            } else {
+              throw new Error('Respuesta no exitosa');
+            }
+          } catch (err) {
+            console.warn("Fallback to form submit for CV:", err);
+            try {
+              const form = document.createElement("form");
+              form.method = "POST";
+              form.action = `https://formsubmit.co/${destination}`;
+              form.enctype = "multipart/form-data";
+              form.target = "_blank";
+              for (const [key, val] of formData.entries()) {
+                const input = document.createElement("input");
+                input.type = (val instanceof File) ? "file" : "hidden";
+                input.name = key;
+                if (!(val instanceof File)) input.value = val;
+                form.appendChild(input);
+              }
+              document.body.appendChild(form);
+              form.submit();
+              document.body.removeChild(form);
+              setApplySuccess(true);
+            } catch (formErr) {
+              setApplyError('Hubo una demora de red. También puedes enviar tu CV directamente haciendo clic abajo en enviar por correo.');
+            }
+          } finally {
+            setIsApplying(false);
+          }
+        };
+
+        const mailtoApplyUrl = `mailto:${targetEmail || 'copinsa.ingenieros@gmail.com'}?subject=Postulaci%C3%B3n%20para%20${encodeURIComponent(selectedJob.title)}%20-%20${encodeURIComponent(applyForm.name || 'Candidato')}&body=Hola%20equipo%20de%20${encodeURIComponent(selectedJob.company)},%0A%0AMe%20pongo%20en%20contacto%20para%20postular%20al%20puesto%20de%20${encodeURIComponent(selectedJob.title)}.%0A%0AMis%20datos:%0A-%20Nombre:%20${encodeURIComponent(applyForm.name || '')}%0A-%20Tel%C3%A9fono:%20${encodeURIComponent(applyForm.phone || '')}%0A-%20Correo:%20${encodeURIComponent(applyForm.email || '')}%0A%0AAdjunto%20mi%20Curr%C3%ADculum%20Vitae%20en%20este%20mensaje.%0A%0ASaludos%20cordiales.`;
+
+        const whatsappApplyUrl = selectedJob.employer_phone 
+          ? `https://api.whatsapp.com/send?phone=${selectedJob.employer_phone}&text=Hola,%20deseo%20postular%20al%20puesto%20de%20${encodeURIComponent(selectedJob.title)}%20en%20${encodeURIComponent(selectedJob.company)}.%20Mi%20nombre%20es%20${encodeURIComponent(applyForm.name || '')}%20y%20deseo%20adjuntar%20mi%20CV.`
+          : `https://api.whatsapp.com/send?text=Hola,%20deseo%20postular%20al%20puesto%20de%20${encodeURIComponent(selectedJob.title)}%20en%20${encodeURIComponent(selectedJob.company)}.`;
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+            <div className="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full p-5 sm:p-8 shadow-2xl border border-slate-200 relative my-6 space-y-6 max-h-[92vh] overflow-y-auto">
+              {/* Botón Cerrar */}
+              <button
+                onClick={() => {
+                  setSelectedJob(null);
+                  setApplySuccess(false);
+                  setApplyError('');
+                }}
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Encabezado del Detalle */}
+              <div className="space-y-3 pr-8">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-extrabold text-xs text-slate-800 flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">
+                    <Building2 className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{selectedJob.company}</span>
+                  </span>
+
+                  {isDirect && (
+                    <span className="text-xs font-bold text-amber-900 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300 flex items-center gap-1 shadow-2xs">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                      <span>⭐ Empresa Destacada Oficial</span>
+                    </span>
+                  )}
+
+                  <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Verificada en Chamba Perú</span>
+                  </span>
+                </div>
+
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
+                  {selectedJob.title}
+                </h2>
+
+                {/* Fila de Metadatos Clave */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs pt-1">
+                  <span className="flex items-center gap-1.5 font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                    <DollarSign className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{selectedJob.salary || 'Sueldo a convenir'}</span>
+                  </span>
+
+                  <span className="flex items-center gap-1.5 text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
+                    <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
+                    <span>{selectedJob.location || 'Perú'}</span>
+                  </span>
+
+                  {selectedJob.contract_type && (
+                    <span className="flex items-center gap-1.5 text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
+                      <Briefcase className="w-4 h-4 text-slate-500 shrink-0" />
+                      <span>{selectedJob.contract_type}</span>
+                    </span>
+                  )}
+
+                  {selectedJob.expires_at && (
+                    <span className="flex items-center gap-1.5 text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 font-semibold">
+                      <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span>Cierre: {selectedJob.expires_at}</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Contenido Detallado: Descripción y Requisitos */}
+              <div className="space-y-5 border-t border-slate-100 pt-5 text-slate-700 text-xs sm:text-sm">
+                {/* Funciones y Descripción */}
+                <div className="space-y-2">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-blue-600" />
+                    <span>Descripción y Funciones del Puesto</span>
+                  </h3>
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 leading-relaxed">
+                    <p className="whitespace-pre-line text-slate-700">
+                      {selectedJob.responsibilities || selectedJob.description?.split('Requisitos:')[0] || selectedJob.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Requisitos con Checks Verdes */}
+                {reqList.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="font-extrabold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span>Requisitos Exigidos</span>
+                    </h3>
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                      {reqList.map((req, idx) => (
+                        <div key={idx} className="flex items-start gap-2.5">
+                          <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                          <span className="text-slate-700 font-medium">{req}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Programas y Software Requerido */}
+                {detectedSoftware.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="font-extrabold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                      <span>💻</span>
+                      <span>Programas y Herramientas Técnicas Requeridas</span>
+                    </h3>
+                    <div className="flex flex-wrap gap-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                      {detectedSoftware.map(sw => (
+                        <span 
+                          key={sw}
+                          className="px-3 py-1 rounded-lg text-xs font-black bg-blue-100 text-blue-800 border border-blue-300 shadow-2xs"
+                        >
+                          {sw}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Formulario de Postulación Directa con CV o Botón Externo */}
+              {isDirect ? (
+                <div className="bg-gradient-to-br from-blue-50/60 via-slate-50 to-indigo-50/40 border-2 border-blue-200 rounded-2xl p-5 sm:p-6 space-y-4">
+                  {applySuccess ? (
+                    /* Pantalla de Éxito de la Postulación */
+                    <div className="text-center py-6 space-y-4">
+                      <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                        <CheckCircle2 className="w-9 h-9 stroke-[2.5]" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-xl sm:text-2xl font-black text-slate-900">¡Postulación Enviada con Éxito!</h4>
+                        <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+                          Tu Currículum Vitae y datos de contacto han sido remitidos directamente al departamento de selección de <strong>{selectedJob.company}</strong> ({targetEmail || 'correo corporativo'}).
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-4 rounded-xl border border-slate-200 text-xs text-slate-700 max-w-md mx-auto text-left space-y-2 shadow-xs">
+                        <p>• <strong>Puesto:</strong> {selectedJob.title}</p>
+                        <p>• <strong>Postulante:</strong> {applyForm.name}</p>
+                        <p>• <strong>Teléfono de contacto:</strong> {applyForm.phone}</p>
+                        <p>• <strong>Correo registrado:</strong> {applyForm.email}</p>
+                        <p>• <strong>CV adjunto enviado:</strong> <code className="font-mono text-blue-700 font-bold">{applyForm.file?.name}</code></p>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                        <button
+                          onClick={() => {
+                            setSelectedJob(null);
+                            setApplySuccess(false);
+                            setApplyForm({ name: '', phone: '', email: '', message: '', file: null });
+                          }}
+                          className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+                        >
+                          Cerrar y volver a empleos
+                        </button>
+
+                        <a
+                          href={whatsappApplyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          <span>Enviar copia por WhatsApp</span>
+                        </a>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Formulario de Carga de CV */
+                    <form onSubmit={handleApplySubmit} className="space-y-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                            <Send className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <h4 className="font-black text-slate-900 text-base sm:text-lg">
+                              Postular Directamente con tu CV
+                            </h4>
+                            <p className="text-xs text-slate-500">
+                              Tu postulación y archivo adjunto se enviarán al correo de selección de <strong>{selectedJob.company}</strong> ({targetEmail || 'correo corporativo'}).
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {applyError && (
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center gap-2">
+                          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                          <span>{applyError}</span>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">
+                            Nombres y Apellidos completos: <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="Ej. Juan Carlos Pérez Quispe"
+                            value={applyForm.name}
+                            onChange={(e) => setApplyForm({ ...applyForm, name: e.target.value })}
+                            className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">
+                            Teléfono celular o WhatsApp: <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="tel"
+                            required
+                            placeholder="Ej. 987654321"
+                            value={applyForm.phone}
+                            onChange={(e) => setApplyForm({ ...applyForm, phone: e.target.value })}
+                            className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                          Tu Correo Electrónico: <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="Ej. mi.correo@gmail.com"
+                          value={applyForm.email}
+                          onChange={(e) => setApplyForm({ ...applyForm, email: e.target.value })}
+                          className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        />
+                      </div>
+
+                      {/* Zona de Carga de CV en PDF o Word */}
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold text-slate-700">
+                          Adjuntar Currículum Vitae (PDF o Word) <span className="text-red-500">*</span>
+                        </label>
+                        <div className={`relative border-2 border-dashed rounded-xl p-4 text-center transition-all ${
+                          applyForm.file ? 'border-emerald-500 bg-emerald-50/40' : 'border-slate-300 hover:border-blue-500 bg-white'
+                        }`}>
+                          <input
+                            type="file"
+                            id="cv-upload-input"
+                            accept=".pdf,.doc,.docx"
+                            required
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                setApplyForm({ ...applyForm, file: e.target.files[0] });
+                                setApplyError('');
+                              }
+                            }}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                          {applyForm.file ? (
+                            <div className="flex items-center justify-between gap-3 text-left">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                  <FileText className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-xs font-bold text-slate-900 truncate">{applyForm.file.name}</p>
+                                  <p className="text-[11px] text-emerald-700 font-medium">
+                                    {(applyForm.file.size / 1024 / 1024).toFixed(2)} MB • Archivo listo para enviar
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setApplyForm({ ...applyForm, file: null });
+                                }}
+                                className="text-xs text-rose-600 hover:text-rose-800 font-semibold px-2 py-1 rounded bg-rose-50 border border-rose-200 cursor-pointer shrink-0"
+                              >
+                                Cambiar
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="space-y-1 pointer-events-none">
+                              <Upload className="w-7 h-7 mx-auto text-blue-600" />
+                              <p className="text-xs font-bold text-slate-800">
+                                Haz clic aquí o arrastra tu CV en PDF o Word
+                              </p>
+                              <p className="text-[11px] text-slate-500">Formatos admitidos: .pdf, .docx, .doc (hasta 15 MB)</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Mensaje de Presentación */}
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                          Mensaje breve o Carta de Presentación (Opcional):
+                        </label>
+                        <textarea
+                          rows="2"
+                          placeholder="Ej. Cumplo con todos los requisitos del puesto, manejo avanzado de AutoCAD y Civil 3D y cuento con disponibilidad inmediata..."
+                          value={applyForm.message}
+                          onChange={(e) => setApplyForm({ ...applyForm, message: e.target.value })}
+                          className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white resize-none"
+                        />
+                      </div>
+
+                      {/* Botones de Envío */}
+                      <div className="pt-2 space-y-2">
+                        <button
+                          type="submit"
+                          disabled={isApplying}
+                          className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-60 text-white font-black text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+                        >
+                          {isApplying ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <span>Enviando tu CV a {selectedJob.company}...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4" />
+                              <span>Enviar mi Postulación con CV a la Empresa</span>
+                            </>
+                          )}
+                        </button>
+
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 px-1 pt-1">
+                          <span>• Entrega directa y confidencial al empleador</span>
+                          <a
+                            href={mailtoApplyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            <Mail className="w-3 h-3" />
+                            <span>Abrir en mi correo para adjuntar</span>
+                          </a>
+                        </div>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              ) : (
+                /* Botón para Vacantes Externas del Estado / Empresas Públicas */
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-3">
+                  <p className="text-xs text-slate-600 max-w-md mx-auto">
+                    Esta vacante se gestiona a través del portal de postulación oficial de la entidad. Haz clic abajo para ver las bases completas y postular.
+                  </p>
+                  <a
+                    href={selectedJob.apply_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-md transition-all active:scale-95"
+                  >
+                    <span>Ir a la Convocatoria Oficial</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
               )}
             </div>
           </div>

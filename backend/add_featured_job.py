@@ -47,15 +47,21 @@ def add_job(
     expires = now + timedelta(days=duration_days)
     expires_str = expires.strftime("%Y-%m-%d")
 
-    # Formatear apply_url
+    # Formatear apply_url y contacto directo
     contact_clean = contact.strip()
     apply_url = contact_clean
+    employer_email = ""
+    employer_phone = ""
     if "@" in contact_clean and not contact_clean.startswith("http") and not contact_clean.startswith("mailto:"):
+        employer_email = contact_clean
         apply_url = f"mailto:{contact_clean}?subject=Postulaci%C3%B3n%20para%20{urllib_quote(title)}"
+    elif contact_clean.startswith("mailto:"):
+        employer_email = contact_clean.replace("mailto:", "").split("?")[0]
     elif contact_clean.replace(" ", "").isdigit():
         phone_num = contact_clean.replace(" ", "")
         if not phone_num.startswith("51") and len(phone_num) == 9:
             phone_num = "51" + phone_num
+        employer_phone = phone_num
         apply_url = f"https://api.whatsapp.com/send?phone={phone_num}&text=Hola,%20deseo%20postular%20a%20la%20vacante%20de%20{urllib_quote(title)}"
 
     is_free = (duration_days <= 15)
@@ -74,13 +80,18 @@ def add_job(
         "contract_type": "Tiempo Completo",
         "sector": sector.strip() if sector else "Sector Privado",
         "description": full_desc,
+        "requirements": requirements.strip() if requirements else "",
+        "responsibilities": description.strip() if description else "",
         "apply_url": apply_url,
+        "employer_email": employer_email,
+        "employer_phone": employer_phone,
+        "is_direct_apply": bool(employer_email),
         "source": "Vacante Destacada Oficial",
         "published_at": now.strftime("%Y-%m-%d"),
         "expires_at": expires_str,
         "is_active": True,
         "is_featured": True,
-        "tags": ["Destacada", "Verificada", plan_tag, sector.strip() if sector else "Privado"]
+        "tags": ["Destacada", "Verificada", plan_tag, sector.strip() if sector else "Privado", "Postulación Directa con CV"]
     }
 
     # 1. Guardar en featured_jobs.json

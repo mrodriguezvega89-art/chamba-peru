@@ -252,7 +252,18 @@
         "Destacada",
         "Verificada",
         "1ra Gratis (15 días)",
-        "Construcción e Ingeniería"
+        "Construcción e Ingeniería",
+        "Postulación Directa con CV"
+      ],
+      "employer_email": "copinsa.ingenieros@gmail.com",
+      "is_direct_apply": true,
+      "requirements": "• Experiencia mínima de 01 año en elaboración de planos.\n• Técnico o Bachiller de Ingeniería Civil o Arquitectura.\n• Dominio de AutoCAD, Civil 3D y Revit.\n• Se dará preferencia a postulantes con conocimiento en ETABS.",
+      "responsibilities": "• Elaboración y compatibilización de planos de arquitectura, estructuras e instalaciones para viviendas.\n• Elaboración de expedientes para licencias y trámites municipales.\n• Levantamiento de planos para declaratorias de fábrica.",
+      "tools": [
+        "AutoCAD",
+        "Civil 3D",
+        "Revit",
+        "ETABS"
       ]
     },
     {
