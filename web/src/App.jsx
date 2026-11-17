@@ -25,7 +25,8 @@ import {
   Mail,
   Copy,
   Smartphone,
-  Loader2
+  Loader2,
+  HelpCircle
 } from 'lucide-react';
 
 // Función para normalizar texto (sin acentos, minúsculas y sin caracteres raros)
@@ -180,7 +181,7 @@ export default function App() {
     if (highlightedJobId) {
       const targetJob = jobs.find(j => j.id === highlightedJobId);
       if (targetJob) {
-        document.title = `${targetJob.title} en ${targetJob.company} - Chamba Perú`;
+        document.title = `${targetJob.title} en ${targetJob.company} | Empleos Perú`;
 
         let scriptTag = document.getElementById('dynamic-jobposting-jsonld');
         if (!scriptTag) {
@@ -232,7 +233,7 @@ export default function App() {
         scriptTag.text = JSON.stringify(jobPosting);
       }
     } else {
-      document.title = 'Chamba Perú | Buscador de Empleos Oficiales y Remotos';
+      document.title = 'Portal de Empleos Perú | Vacantes Laborales y Convocatorias 2026';
     }
   }, [highlightedJobId, jobs]);
 
@@ -356,14 +357,25 @@ export default function App() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-xl text-slate-900 tracking-tight">Chamba<span className="text-blue-600">Perú</span></span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold border border-red-200">🇵🇪 PE</span>
+                <span className="font-black text-lg sm:text-xl text-slate-900 tracking-tight">Empleos<span className="text-blue-600">Perú</span></span>
+                <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold border border-blue-200">Chamba Perú</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-semibold border border-red-200 hidden sm:inline-block">🇵🇪 PE</span>
               </div>
-              <p className="text-[11px] text-slate-500 hidden sm:block">Buscador oficial y transparente de empleos en Perú</p>
+              <p className="text-[11px] text-slate-500 hidden sm:block">Portal de Empleos y Vacantes Laborales en Perú</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5">
+            {/* Botón de Ayuda / Soporte Oficial */}
+            <a
+              href="mailto:todoventasperu@outlook.com.pe?subject=Consulta%20o%20Soporte%20-%20Portal%20de%20Empleos%20Perú"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 border border-slate-200 transition-colors"
+              title="Contacto y soporte directo: todoventasperu@outlook.com.pe"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
+              <span>¿Necesitas Ayuda?</span>
+            </a>
+
             {/* Botón de Empleos Guardados / Favoritos */}
             <button
               onClick={() => setOnlySaved(!onlySaved)}
@@ -390,7 +402,7 @@ export default function App() {
 
             <button
               onClick={() => setShowPublishModal(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs sm:text-sm transition-colors shadow-xs"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs sm:text-sm transition-colors shadow-xs cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Publicar Vacante</span>
@@ -404,14 +416,19 @@ export default function App() {
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-xs font-semibold">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-            <span>1,700+ vacantes reales de las 100 empresas top, Colegios Profesionales y el Estado</span>
+            <span>Portal de Empleos Perú (Chamba Perú) — 1,700+ vacantes verificadas</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-            Encuentra tu próxima chamba en <span className="text-blue-600">Perú</span>
-          </h1>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            Buscamos todos los días en el Estado (25 departamentos), Colegios Profesionales (Médicos, Abogados, Ingenieros), Constructoras, Retail y Banca.
+          <div className="space-y-1.5">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+              Portal de <span className="text-blue-600">Empleos en Perú</span>
+            </h1>
+            <p className="text-base sm:text-xl font-bold text-slate-700">
+              Vacantes Laborales, Convocatorias de Trabajo y Empleos Vigentes 2026
+            </p>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
+            Buscamos todos los días en convocatorias públicas de los 25 departamentos, Colegios Profesionales (CIP, CMP, CAL), Top 100 Empresas y vacantes remotas.
           </p>
 
           {/* Caja de Búsqueda Full-Text */}
@@ -1241,23 +1258,48 @@ DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
         );
       })()}
 
-      {/* 5. Pie de página legal y transparente */}
-      <footer className="bg-white border-t border-slate-200 mt-12 py-8 px-4 text-xs text-slate-500">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="space-y-1 text-center md:text-left">
-            <p className="font-bold text-slate-800">Chamba Perú — Buscador de Oportunidades Laborales</p>
-            <p className="text-[11px] text-slate-500 max-w-lg">
-              Agregador independiente que indexa avisos públicos del Estado peruano (Ley N° 27806) y portales corporativos de las 100 empresas líderes en Perú. Redirigimos 100% a las fuentes oficiales sin cobros ni intermediarios.
-            </p>
+      {/* 5. Pie de página legal, soporte y contacto oficial */}
+      <footer className="bg-white border-t border-slate-200 mt-14 pt-10 pb-8 px-4 text-xs text-slate-500">
+        <div className="max-w-5xl mx-auto space-y-8">
+          
+          {/* Bloque de Contacto y Soporte */}
+          <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-1 text-center md:text-left">
+              <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">Centro de Soporte y Ayuda</span>
+              <h4 className="text-base font-bold text-slate-900">¿Tienes dudas, necesitas ayuda o deseas contactarte con nosotros?</h4>
+              <p className="text-xs text-slate-600 max-w-xl">
+                Escríbenos directamente a nuestro canal oficial para consultas sobre convocatorias, soporte técnico o publicación de vacantes destacadas en todo el país.
+              </p>
+            </div>
+
+            <a
+              href="mailto:todoventasperu@outlook.com.pe?subject=Consulta%20o%20Soporte%20-%20Portal%20de%20Empleos%20Perú"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 shrink-0"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Contactar: todoventasperu@outlook.com.pe</span>
+            </a>
           </div>
 
-          <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
-            <span>Actualización diaria</span>
-            <span>•</span>
-            <span>Acceso Gratuito</span>
-            <span>•</span>
-            <span>Perú 2026</span>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200">
+            <div className="space-y-1 text-center md:text-left">
+              <p className="font-bold text-slate-800">Portal de Empleos Perú (Chamba Perú) — Vacantes Laborales Oficiales</p>
+              <p className="text-[11px] text-slate-500 max-w-xl">
+                Buscador independiente de vacantes de trabajo y convocatorias del Estado en los 25 departamentos de Perú (Ley N° 27806) y portales corporativos de las 100 empresas líderes.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-500">
+              <a href="mailto:todoventasperu@outlook.com.pe" className="text-blue-600 font-semibold hover:underline">
+                todoventasperu@outlook.com.pe
+              </a>
+              <span>•</span>
+              <span>Actualización Diaria</span>
+              <span>•</span>
+              <span>Perú 2026</span>
+            </div>
           </div>
+
         </div>
       </footer>
 
