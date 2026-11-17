@@ -24,7 +24,8 @@ import {
   Check,
   Mail,
   Copy,
-  Smartphone
+  Smartphone,
+  Loader2
 } from 'lucide-react';
 
 // Función para normalizar texto (sin acentos, minúsculas y sin caracteres raros)
@@ -57,6 +58,10 @@ export default function App() {
   // Formulario y datos de Publicar Vacante
   const [clientIp, setClientIp] = useState('Detectando...');
   const [copiedMail, setCopiedMail] = useState(false);
+  const [planType, setPlanType] = useState('GRATIS_15');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [pubForm, setPubForm] = useState({
     company: '',
     title: '',
@@ -872,212 +877,365 @@ export default function App() {
         </section>
       </main>
 
-      {/* 4. Modal para Publicar Vacante (2 vacantes x 1 mes en el TOP por S/ 5 con Yape / Plin) */}
+      {/* 4. Modal para Publicar Vacante Directamente desde la Web */}
       {showPublishModal && (() => {
-        const mailSubject = `Publicar Vacante - (${pubForm.company ? pubForm.company.trim() : 'Empresa o Ruc'})`;
+        const mailSubject = `Publicar Vacante (${planType === 'GRATIS_15' ? '1ra GRATIS 15 días' : 'Plan S/ 5'}): ${pubForm.company || 'Empresa'} - ${pubForm.title || 'Puesto'}`;
         const mailBody = `Solicitud de Publicación de Vacante en Chamba Perú
 
 Empresa o Ruc: ${pubForm.company || ''}
 Titulo de la Vacante: ${pubForm.title || ''}
+Contacto Obligatorio (Correo/Teléfono): ${pubForm.contact || ''}
 Descripcion de la Vacante: ${pubForm.description || ''}
 Requisitos de la Vacante: ${pubForm.requirements || ''}
-Contacto para la Vacante: ${pubForm.contact || ''}
 Fecha para la Vacante: ${pubForm.date || ''}
 
 --------------------------------------------------
-PLAN Y CONDICIONES SELECCIONADAS:
-• Ubicación: Parte superior de la web, en los primeros lugares (TOP Destacado).
-• Cobertura: Publicación de hasta 2 vacantes durante 1 mes completo (30 días).
-• Tarifa: S/ 5.00 soles mediante Billeteras Digitales de Perú (Yape / Plin).
-• Forma de abono: Por favor indicarme los datos de pago en su correo de respuesta.
+PLAN SELECCIONADO:
+${planType === 'GRATIS_15' ? '• Plan: 1ra Vacante 100% GRATIS (15 días en el TOP como si fuera pagado)' : '• Plan: S/ 5.00 soles (2 vacantes x 1 mes en el TOP vía Yape/Plin)'}
 --------------------------------------------------
-DATOS DE VERIFICACIÓN Y AUDITORÍA:
+DATOS DE VERIFICACIÓN Y AUDITORÍA INALTERABLE:
 • IP de origen del remitente: ${clientIp}
 • Fecha y hora de envío: ${new Date().toLocaleString('es-PE')}
 --------------------------------------------------`;
 
         const mailtoUrl = `mailto:todoventasperu@outlook.com.pe?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
 
+        const handleDirectSubmit = async (e) => {
+          e.preventDefault();
+          if (!pubForm.company.trim() || !pubForm.title.trim() || !pubForm.contact.trim() || !pubForm.description.trim() || !pubForm.requirements.trim() || !pubForm.date.trim()) {
+            setSubmitError('Por favor completa todos los campos obligatorios (*) antes de enviar.');
+            return;
+          }
+
+          setIsSubmitting(true);
+          setSubmitError('');
+
+          const payload = {
+            _subject: `Nueva Vacante (${planType === 'GRATIS_15' ? '1ra GRATIS 15 días' : 'Plan S/ 5'}): ${pubForm.company} - ${pubForm.title}`,
+            _captcha: "false",
+            _template: "table",
+            "Plan Seleccionado": planType === 'GRATIS_15' 
+              ? "🟢 1ra Publicación GRATIS (15 días en el TOP)" 
+              : "⭐ Plan S/ 5.00 soles (2 vacantes x 1 mes en el TOP)",
+            "Empresa o RUC": pubForm.company.trim(),
+            "Título de la Vacante": pubForm.title.trim(),
+            "Contacto Obligatorio (Correo / Teléfono)": pubForm.contact.trim(),
+            "Descripción": pubForm.description.trim(),
+            "Requisitos": pubForm.requirements.trim(),
+            "Fecha Límite": pubForm.date.trim(),
+            "IP Remitente Verificada (Inalterable)": clientIp,
+            "Fecha de Envío": new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })
+          };
+
+          try {
+            const res = await fetch("https://formsubmit.co/ajax/todoventasperu@outlook.com.pe", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+              setSubmitSuccess(true);
+            } else {
+              throw new Error('Respuesta no exitosa');
+            }
+          } catch (err) {
+            console.warn("AJAX fallback to form post:", err);
+            try {
+              const form = document.createElement("form");
+              form.method = "POST";
+              form.action = "https://formsubmit.co/todoventasperu@outlook.com.pe";
+              form.target = "_blank";
+              for (const [key, val] of Object.entries(payload)) {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = val;
+                form.appendChild(input);
+              }
+              document.body.appendChild(form);
+              form.submit();
+              document.body.removeChild(form);
+              setSubmitSuccess(true);
+            } catch (formErr) {
+              setSubmitError('Hubo un inconveniente de red. También puedes enviarlo directamente haciendo clic abajo en enviar por correo.');
+            }
+          } finally {
+            setIsSubmitting(false);
+          }
+        };
+
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
             <div className="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 relative my-8 space-y-4 max-h-[90vh] overflow-y-auto">
               <button
-                onClick={() => setShowPublishModal(false)}
+                onClick={() => {
+                  setShowPublishModal(false);
+                  setSubmitSuccess(false);
+                }}
                 className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Encabezado */}
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
-                    Empresas y Empleadores en Perú
-                  </span>
-                  <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-amber-600" />
-                    <span>Primeros Lugares en el TOP</span>
-                  </span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-                  Publicar Vacante de Empleo
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Tus vacantes se colocarán en la <strong>parte superior de la web, en los primeros lugares</strong> con distintivo destacado para máxima visibilidad en todo el Perú.
-                </p>
-              </div>
-
-              {/* Aviso de Precios y Políticas */}
-              <div className="bg-gradient-to-r from-amber-50/80 via-blue-50/60 to-emerald-50/60 p-4 rounded-xl border border-amber-300 text-xs space-y-2 text-slate-700">
-                <div className="flex items-center justify-between font-bold text-slate-900">
-                  <span className="flex items-center gap-1 text-slate-800 font-extrabold text-xs">
-                    <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span>Plan Destacado en el TOP</span>
-                  </span>
-                  <span className="text-emerald-800 font-extrabold bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300 text-xs">
-                    S/ 5.00 soles (2 vacantes x 1 mes)
-                  </span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] text-slate-700">
-                  <li>• <strong>Ubicación Preferencial:</strong> Tus ofertas se colocarán en la <strong>parte superior de la web, en los primeros lugares</strong>.</li>
-                  <li>• <strong>Promoción:</strong> El pago corresponde para publicar <strong>2 vacantes durante un mes completo (30 días)</strong>.</li>
-                  <li>• <strong>Método de pago:</strong> Billeteras Digitales de Perú (<strong>Yape / Plin</strong>). Todos los pagos y códigos se indicarán en el <strong>correo de respuesta correspondiente</strong>.</li>
-                  <li>• <strong>Seguridad anti-fraude:</strong> Reconocimiento de IP de origen para auditoría y validación del anunciante.</li>
-                </ul>
-              </div>
-
-              {/* Formulario de Datos */}
-              <div className="space-y-3 pt-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Empresa o Ruc: <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ej. Comercial Lima SAC / 20601234567"
-                      value={pubForm.company}
-                      onChange={(e) => setPubForm({ ...pubForm, company: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+              {submitSuccess ? (
+                /* Pantalla de Éxito */
+                <div className="text-center py-6 space-y-4">
+                  <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                    <Check className="w-8 h-8 stroke-[3]" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-black text-slate-900">¡Vacante enviada con éxito!</h3>
+                    <p className="text-xs text-slate-600 max-w-sm mx-auto">
+                      Se ha enviado la solicitud de publicación a <strong>todoventasperu@outlook.com.pe</strong> con tu IP de auditoría verificada.
+                    </p>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Titulo de la Vacante: <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ej. Asistente Contable / Vendedora"
-                      value={pubForm.title}
-                      onChange={(e) => setPubForm({ ...pubForm, title: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Descripcion de la Vacante: <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    rows="2"
-                    placeholder="Detalla las funciones principales, horario o modalidad (Presencial/Remoto)..."
-                    value={pubForm.description}
-                    onChange={(e) => setPubForm({ ...pubForm, description: e.target.value })}
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Requisitos de la Vacante: <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    rows="2"
-                    placeholder="Ej. Egresado o técnico, 1 año de experiencia, manejo de herramientas..."
-                    value={pubForm.requirements}
-                    onChange={(e) => setPubForm({ ...pubForm, requirements: e.target.value })}
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Contacto para la Vacante: <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Correo, WhatsApp o link oficial"
-                      value={pubForm.contact}
-                      onChange={(e) => setPubForm({ ...pubForm, contact: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs text-slate-700 max-w-md mx-auto text-left space-y-2">
+                    <p>• <strong>Puesto enviado:</strong> {pubForm.title} ({pubForm.company})</p>
+                    <p>• <strong>Contacto registrado:</strong> {pubForm.contact}</p>
+                    <p>• <strong>IP auditada:</strong> <code className="font-mono text-blue-700">{clientIp}</code></p>
+                    {planType === 'GRATIS_15' ? (
+                      <p className="text-emerald-800 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                        🟢 Al ser tu 1ra publicación, tu vacante se activará 100% GRATIS durante 15 días en el TOP (primeros lugares).
+                      </p>
+                    ) : (
+                      <p className="text-blue-800 font-bold bg-blue-50 p-2 rounded-lg border border-blue-200">
+                        ⭐ Plan de S/ 5.00 soles (2 vacantes x 1 mes en el TOP). Te responderemos con los datos de Yape / Plin.
+                      </p>
+                    )}
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Fecha para la Vacante: <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ej. Hasta el 30 de Noviembre / Inmediato"
-                      value={pubForm.date}
-                      onChange={(e) => setPubForm({ ...pubForm, date: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+                  <button
+                    onClick={() => {
+                      setShowPublishModal(false);
+                      setSubmitSuccess(false);
+                      setPubForm({ company: '', title: '', description: '', requirements: '', contact: '', date: '' });
+                    }}
+                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-md active:scale-95"
+                  >
+                    Cerrar y volver al buscador
+                  </button>
                 </div>
-              </div>
+              ) : (
+                /* Formulario de Envío Directo */
+                <form onSubmit={handleDirectSubmit} className="space-y-4">
+                  {/* Encabezado */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                        Empresas y Empleadores en Perú
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                      Publicar Vacante en Chamba Perú
+                    </h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Envía los datos directamente desde esta ventana. Llegará al correo oficial de revisión y te responderemos de inmediato.
+                    </p>
+                  </div>
 
-              {/* Badge de Auditoría de IP */}
-              <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-500">
-                <span className="flex items-center gap-1.5 font-medium text-slate-700">
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Auditoría de Seguridad:</span>
-                </span>
-                <span className="font-mono text-slate-600">
-                  IP Remitente: <strong className="text-blue-700">{clientIp}</strong>
-                </span>
-              </div>
+                  {/* Selector de Plan: 1ra Gratis (15 días) vs Plan Pagado S/ 5 (2 vacantes x 1 mes) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {/* Opción 1: Primera Gratis 15 días */}
+                    <div
+                      onClick={() => setPlanType('GRATIS_15')}
+                      className={`cursor-pointer p-3.5 rounded-xl border-2 transition-all ${
+                        planType === 'GRATIS_15'
+                          ? 'border-emerald-500 bg-emerald-50/50 shadow-xs ring-1 ring-emerald-400'
+                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-emerald-800 flex items-center gap-1">
+                          🟢 1ra Publicación GRATIS
+                        </span>
+                        <input
+                          type="radio"
+                          name="plan"
+                          checked={planType === 'GRATIS_15'}
+                          onChange={() => setPlanType('GRATIS_15')}
+                          className="text-emerald-600 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <p className="text-[11px] text-slate-600 mt-1">
+                        <strong>15 días en el TOP</strong> de la web en los primeros lugares, como si fuera pagado.
+                      </p>
+                    </div>
 
-              {/* Botones de Acción */}
-              <div className="space-y-2 pt-1">
-                <a
-                  href={mailtoUrl}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all active:scale-95"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>Enviar a todoventasperu@outlook.com.pe</span>
-                </a>
+                    {/* Opción 2: Renovación / 2 Vacantes x S/ 5 */}
+                    <div
+                      onClick={() => setPlanType('PAGADO_S5')}
+                      className={`cursor-pointer p-3.5 rounded-xl border-2 transition-all ${
+                        planType === 'PAGADO_S5'
+                          ? 'border-blue-500 bg-blue-50/50 shadow-xs ring-1 ring-blue-400'
+                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-blue-900 flex items-center gap-1">
+                          ⭐ Plan 2 Vacantes x 1 Mes
+                        </span>
+                        <input
+                          type="radio"
+                          name="plan"
+                          checked={planType === 'PAGADO_S5'}
+                          onChange={() => setPlanType('PAGADO_S5')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                      </div>
+                      <p className="text-[11px] text-slate-600 mt-1">
+                        <strong>S/ 5.00 soles</strong> por 2 vacantes durante 1 mes en el TOP vía <strong>Yape / Plin</strong>.
+                      </p>
+                    </div>
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(mailBody);
-                    setCopiedMail(true);
-                    setTimeout(() => setCopiedMail(false), 2500);
-                  }}
-                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-300 transition-colors"
-                >
-                  {copiedMail ? (
-                    <>
-                      <Check className="w-4 h-4 text-emerald-600" />
-                      <span className="text-emerald-700 font-bold">¡Plantilla copiada al portapapeles!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 text-slate-500" />
-                      <span>Copiar datos de la vacante (para Outlook Web o Gmail)</span>
-                    </>
+                  {submitError && (
+                    <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+                      ⚠️ {submitError}
+                    </div>
                   )}
-                </button>
-              </div>
 
-              <p className="text-[11px] text-center text-slate-400">
-                Revisamos y activamos la publicación en menos de 24 horas hábiles.
-              </p>
+                  {/* Campos del Formulario */}
+                  <div className="space-y-3 pt-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                          Empresa o RUC: <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Ej. Comercial Lima SAC / 20601234567"
+                          value={pubForm.company}
+                          onChange={(e) => setPubForm({ ...pubForm, company: e.target.value })}
+                          className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                          Título de la Vacante: <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Ej. Asistente Contable / Vendedor"
+                          value={pubForm.title}
+                          onChange={(e) => setPubForm({ ...pubForm, title: e.target.value })}
+                          className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Contacto Obligatorio */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-900 mb-1 flex items-center justify-between">
+                        <span>Correo o WhatsApp de Contacto: <span className="text-red-500">*</span></span>
+                        <span className="text-[10px] text-blue-600 font-normal">Obligatorio para responderte y verificar</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ej. reclutamiento@tuempresa.com o 987654321"
+                        value={pubForm.contact}
+                        onChange={(e) => setPubForm({ ...pubForm, contact: e.target.value })}
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-blue-300 bg-blue-50/20 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Descripción de la Vacante: <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        rows="2"
+                        required
+                        placeholder="Detalla las funciones principales, horario o modalidad (Presencial/Remoto)..."
+                        value={pubForm.description}
+                        onChange={(e) => setPubForm({ ...pubForm, description: e.target.value })}
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Requisitos de la Vacante: <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        rows="2"
+                        required
+                        placeholder="Ej. Egresado o técnico, 1 año de experiencia, manejo de Excel..."
+                        value={pubForm.requirements}
+                        onChange={(e) => setPubForm({ ...pubForm, requirements: e.target.value })}
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Fecha o Vigencia de la Vacante: <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ej. Hasta el 30 de Noviembre / Contratación Inmediata"
+                        value={pubForm.date}
+                        onChange={(e) => setPubForm({ ...pubForm, date: e.target.value })}
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Auditoría de IP Inalterable */}
+                  <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600">
+                    <span className="flex items-center gap-1.5 font-bold text-slate-800">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <span>Auditoría de IP Activa:</span>
+                    </span>
+                    <span className="font-mono text-slate-700">
+                      IP Verificada: <strong className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">{clientIp}</strong>
+                    </span>
+                  </div>
+
+                  {/* Botón de Envío Directo */}
+                  <div className="pt-1 space-y-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-black text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Enviando vacante a todoventasperu@outlook.com.pe...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Enviar Vacante Directamente</span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
+                      <span>• Revisión y respuesta en menos de 24 horas</span>
+                      <a
+                        href={mailtoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline flex items-center gap-1"
+                      >
+                        <Mail className="w-3 h-3" />
+                        <span>Abrir en mi correo</span>
+                      </a>
+                    </div>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         );
