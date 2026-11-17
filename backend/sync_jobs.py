@@ -13,6 +13,7 @@ from sources.peru_universities_colleges import get_all_universities_and_colleges
 from sources.remote_apis import get_remote_jobs
 from sources.ats_boards import get_ats_jobs
 from database import save_to_json, sync_to_supabase
+from seo_generator import generate_seo_assets
 
 def run_synchronization():
     print(f"===========================================================")
@@ -90,7 +91,13 @@ def run_synchronization():
     json_path = os.path.join(base_dir, "web", "public", "data", "jobs.json")
     save_to_json(final_jobs, json_path)
 
-    # 6. Opcional: Sincronizar con Supabase si existen credenciales
+    # 6. Generar Sitemap y Robots.txt para Google y Bing
+    try:
+        generate_seo_assets(final_jobs, base_dir)
+    except Exception as e:
+        print(f"[Error] Falló generación de Sitemap/SEO: {e}")
+
+    # 7. Opcional: Sincronizar con Supabase si existen credenciales
     sync_to_supabase(final_jobs)
 
     print(f"===========================================================")

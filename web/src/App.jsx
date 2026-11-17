@@ -49,6 +49,7 @@ export default function App() {
   const [onlyWithSalary, setOnlyWithSalary] = useState(false);
   const [onlySaved, setOnlySaved] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
+  const [highlightedJobId, setHighlightedJobId] = useState(null);
 
   // Paginación progresiva para velocidad instantánea con 1,700+ empleos
   const [visibleCount, setVisibleCount] = useState(30);
@@ -64,6 +65,25 @@ export default function App() {
   });
 
   const [copiedId, setCopiedId] = useState(null);
+
+  // Sectores disponibles para filtros
+  const sectorList = [
+    { id: 'ALL', label: 'Todas las Ofertas', icon: '✨' },
+    { id: 'Sector Público', label: 'Sector Público (Estado)', icon: '🏛️' },
+    { id: 'Legal y Sector Público', label: 'Abogados (CAL)', icon: '⚖️' },
+    { id: 'Salud y Medicina', label: 'Médicos (CMP)', icon: '🩺' },
+    { id: 'Educación y Universidad', label: 'Universidades Top', icon: '🎓' },
+    { id: 'Ingeniería y Construcción', label: 'Ingeniería (CIP Lima)', icon: '👷' },
+    { id: 'Construcción y Maquinaria', label: 'Constructoras e Inmobiliarias', icon: '🏗️' },
+    { id: 'Banca y Finanzas', label: 'Banca y Finanzas', icon: '🏦' },
+    { id: 'Retail y Tiendas', label: 'Retail y Supermercados', icon: '🛒' },
+    { id: 'Consumo Masivo', label: 'Consumo Masivo', icon: '🏭' },
+    { id: 'Minería y Energía', label: 'Minería y Energía', icon: '⛏️' },
+    { id: 'Tecnología y Telco', label: 'Tecnología y Telco', icon: '💻' },
+    { id: 'Restaurantes', label: 'Starbucks / Delosi', icon: '☕' },
+    { id: 'Salud y Logística', label: 'Salud y Logística', icon: '🏥' },
+    { id: 'Agroindustria', label: 'Agroindustria', icon: '🌱' },
+  ];
 
   // Cargar datos
   useEffect(() => {
@@ -84,6 +104,110 @@ export default function App() {
       });
   }, []);
 
+  // Leer parámetros iniciales de la URL (Deep linking y SEO)
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlId = params.get('id');
+      const urlQ = params.get('q');
+      const urlSector = params.get('sector');
+      const urlDep = params.get('departamento');
+
+      if (urlId) setHighlightedJobId(urlId);
+      if (urlQ) setSearchTerm(urlQ);
+      if (urlDep) setSelectedLocation(urlDep);
+      if (urlSector) {
+        const found = sectorList.find(
+          s => s.id.toLowerCase() === urlSector.toLowerCase() || 
+               s.label.toLowerCase().includes(urlSector.toLowerCase())
+        );
+        if (found) setSelectedSector(found.id);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // Sincronizar URL para SEO y enlaces directos sin recargar
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams();
+      if (searchTerm) params.set('q', searchTerm);
+      if (selectedSector && selectedSector !== 'ALL') params.set('sector', selectedSector);
+      if (selectedLocation && selectedLocation !== 'ALL') params.set('departamento', selectedLocation);
+      if (highlightedJobId) params.set('id', highlightedJobId);
+
+      const qs = params.toString();
+      const newUrl = qs ? `?${qs}` : window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    } catch (e) {
+      // Ignorar en entornos sin window.history
+    }
+  }, [searchTerm, selectedSector, selectedLocation, highlightedJobId]);
+
+  // Dynamic Schema.org JobPosting para Google for Jobs y título dinámico
+  useEffect(() => {
+    if (jobs.length === 0) return;
+
+    if (highlightedJobId) {
+      const targetJob = jobs.find(j => j.id === highlightedJobId);
+      if (targetJob) {
+        document.title = `${targetJob.title} en ${targetJob.company} - Chamba Perú`;
+
+        let scriptTag = document.getElementById('dynamic-jobposting-jsonld');
+        if (!scriptTag) {
+          scriptTag = document.createElement('script');
+          scriptTag.id = 'dynamic-jobposting-jsonld';
+          scriptTag.type = 'application/ld+json';
+          document.head.appendChild(scriptTag);
+        }
+
+        const jobPosting = {
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": targetJob.title,
+          "description": `${targetJob.title} en ${targetJob.company}. Ubicación: ${targetJob.location || 'Perú'}. Contrato: ${targetJob.contract_type || 'Completo'}. Convocatoria verificada oficial.`,
+          "datePosted": targetJob.published_at || new Date().toISOString(),
+          "hiringOrganization": {
+            "@type": "Organization",
+            "name": targetJob.company,
+            "sameAs": targetJob.apply_url
+          },
+          "jobLocation": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": targetJob.location || "Lima",
+              "addressRegion": targetJob.location || "Lima",
+              "addressCountry": "PE"
+            }
+          },
+          "employmentType": targetJob.contract_type?.includes("Prácticas") ? "INTERN" : "FULL_TIME",
+          "directApply": true
+        };
+
+        if (targetJob.salary) {
+          const numSal = parseFloat(targetJob.salary.replace(/[^0-9.]/g, ''));
+          if (!isNaN(numSal) && numSal > 0) {
+            jobPosting.baseSalary = {
+              "@type": "MonetaryAmount",
+              "currency": targetJob.salary.includes('$') ? "USD" : "PEN",
+              "value": {
+                "@type": "QuantitativeValue",
+                "value": numSal,
+                "unitText": "MONTH"
+              }
+            };
+          }
+        }
+
+        scriptTag.text = JSON.stringify(jobPosting);
+      }
+    } else {
+      document.title = 'Chamba Perú | Buscador de Empleos Oficiales y Remotos';
+    }
+  }, [highlightedJobId, jobs]);
+
   // Guardar favoritos en localStorage
   const toggleSaveJob = (id) => {
     setSavedJobs((prev) => {
@@ -97,31 +221,13 @@ export default function App() {
     });
   };
 
-  // Copiar enlace al portapapeles
+  // Copiar enlace directo de Chamba Perú para compartir con otros
   const handleCopyLink = (job) => {
-    navigator.clipboard.writeText(job.apply_url);
+    const shareableUrl = `${window.location.origin}/?id=${encodeURIComponent(job.id)}`;
+    navigator.clipboard.writeText(shareableUrl);
     setCopiedId(job.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
-
-  // Sectores disponibles para filtros
-  const sectorList = [
-    { id: 'ALL', label: 'Todas las Ofertas', icon: '✨' },
-    { id: 'Sector Público', label: 'Sector Público (Estado)', icon: '🏛️' },
-    { id: 'Legal y Sector Público', label: 'Abogados (CAL)', icon: '⚖️' },
-    { id: 'Salud y Medicina', label: 'Médicos (CMP)', icon: '🩺' },
-    { id: 'Educación y Universidad', label: 'Universidades Top', icon: '🎓' },
-    { id: 'Ingeniería y Construcción', label: 'Ingeniería (CIP Lima)', icon: '👷' },
-    { id: 'Construcción y Maquinaria', label: 'Constructoras e Inmobiliarias', icon: '🏗️' },
-    { id: 'Banca y Finanzas', label: 'Banca y Finanzas', icon: '🏦' },
-    { id: 'Retail y Tiendas', label: 'Retail y Supermercados', icon: '🛒' },
-    { id: 'Consumo Masivo', label: 'Consumo Masivo', icon: '🏭' },
-    { id: 'Minería y Energía', label: 'Minería y Energía', icon: '⛏️' },
-    { id: 'Tecnología y Telco', label: 'Tecnología y Telco', icon: '💻' },
-    { id: 'Restaurantes', label: 'Starbucks / Delosi', icon: '☕' },
-    { id: 'Salud y Logística', label: 'Salud y Logística', icon: '🏥' },
-    { id: 'Agroindustria', label: 'Agroindustria', icon: '🌱' },
-  ];
 
   // Reiniciar paginación al cambiar filtros
   useEffect(() => {
@@ -438,16 +544,23 @@ export default function App() {
             const isCal = job.source.includes('CAL');
             const isCmp = job.source.includes('CMP');
             const isSaved = savedJobs.includes(job.id);
+            const isHighlighted = highlightedJobId === job.id;
+            const directShareUrl = `${window.location.origin}/?id=${encodeURIComponent(job.id)}`;
 
             // Mensaje para compartir por WhatsApp
-            const shareText = encodeURIComponent(`💼 Vacante: ${job.title} en ${job.company}\n📍 Ubicación: ${job.location}\n💰 Sueldo: ${job.salary || 'A convenir'}\n🔗 Postula aquí: ${job.apply_url}`);
+            const shareText = encodeURIComponent(`🇵🇪 *Oportunidad Laboral en Perú*\n💼 *${job.title}*\n🏢 ${job.company}\n📍 ${job.location || 'Perú'}\n💰 ${job.salary || 'Sueldo a convenir'}\n🔗 Ver detalles oficiales aquí: ${directShareUrl}`);
 
             return (
               <article
                 key={job.id}
+                id={`job-${job.id}`}
                 itemScope
                 itemType="https://schema.org/JobPosting"
-                className="group bg-white rounded-2xl p-5 border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-5 relative"
+                className={`group bg-white rounded-2xl p-5 border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-5 relative ${
+                  isHighlighted 
+                    ? 'ring-2 ring-blue-600 border-blue-500 bg-blue-50/20 shadow-lg' 
+                    : 'border-slate-200 hover:border-blue-500 hover:shadow-md'
+                }`}
               >
                 {/* Columna Izquierda: Información de la vacante */}
                 <div className="space-y-2.5 flex-1 min-w-0">
@@ -628,6 +741,96 @@ export default function App() {
             </button>
           </div>
         )}
+        {/* 3.1 Directorio Rápido por Regiones y Departamentos (SEO y Accesibilidad) */}
+        <section className="mt-16 pt-8 border-t border-slate-200">
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-blue-600" />
+                <span>Directorio de Empleos por Departamento en Perú</span>
+              </h2>
+              <p className="text-xs text-slate-500">
+                Encuentra convocatorias públicas de gobiernos regionales, municipalidades y empresas privadas en todo el Perú:
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                'Lima', 'Arequipa', 'La Libertad', 'Cusco', 'Piura', 'Junín', 
+                'Lambayeque', 'Áncash', 'Ica', 'Puno', 'Cajamarca', 'Loreto', 
+                'San Martín', 'Huánuco', 'Ayacucho', 'Ucayali', 'Tacna', 
+                'Moquegua', 'Apurímac', 'Amazonas', 'Huancavelica', 'Madre de Dios', 
+                'Pasco', 'Tumbes', 'Callao'
+              ].map((dep) => (
+                <button
+                  key={dep}
+                  onClick={() => {
+                    setSelectedLocation(dep);
+                    window.scrollTo({ top: 320, behavior: 'smooth' });
+                  }}
+                  className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
+                    selectedLocation === dep 
+                      ? 'bg-blue-600 text-white shadow-sm' 
+                      : 'bg-white hover:bg-blue-50 text-slate-600 hover:text-blue-700 border border-slate-200'
+                  }`}
+                >
+                  {dep}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 3.2 Sección de Contenido SEO y Preguntas Frecuentes (E-E-A-T) */}
+        <section className="mt-12 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+          <div className="space-y-2 border-b border-slate-100 pb-4">
+            <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Centro de Información Laboral</span>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+              Guía de Convocatorias y Empleos Oficiales en Perú 2026
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Chamba Perú es un agregador independiente y gratuito diseñado para conectar a los profesionales, técnicos y egresados peruanos con ofertas laborales legítimas y convocatorias del Estado en los 25 departamentos del país.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-600">
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                🏛️ Convocatorias CAS y Régimen 728
+              </h3>
+              <p className="leading-relaxed">
+                Todas las convocatorias públicas indexadas provienen de los portales de transparencia estándar de ministerios, gobiernos regionales, municipalidades, universidades y entidades como SUNAT, ESSALUD, Poder Judicial y Banco Central de Reserva (BCRP), amparadas en la Ley N° 27806 de Transparencia y Acceso a la Información Pública.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                💼 Bolsas de Colegios Profesionales
+              </h3>
+              <p className="leading-relaxed">
+                Monitoreamos las publicaciones oficiales del <strong>Colegio de Ingenieros del Perú (CIP Lima)</strong> con descarga directa de bases en PDF, el Portal del Empleador del <strong>Colegio Médico del Perú (CMP)</strong> y la bolsa de trabajo del <strong>Colegio de Abogados de Lima (CAL)</strong>.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                🏢 Empresas Privadas y Sistemas ATS
+              </h3>
+              <p className="leading-relaxed">
+                Conectamos directamente con los sistemas de selección (ATS) de los principales grupos empresariales: BCP, BBVA, Interbank, Falabella, Ripley, Alicorp, Backus, Delosi (Starbucks, KFC), Cosapi, Besco y más de 50 constructoras e inmobiliarias del Perú.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                🛡️ Postulación 100% Segura y Gratuita
+              </h3>
+              <p className="leading-relaxed">
+                No requerimos creación de cuenta ni almacenamiento de currículums. Cada botón de postulación te lleva sin escalas al formulario oficial del empleador o entidad estatal, garantizando total transparencia y evitando estafas laborales.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* 4. Modal para Publicar Empleo Gratis */}

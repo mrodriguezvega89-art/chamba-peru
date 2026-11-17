@@ -1,0 +1,13 @@
+# Chamba Perú - Robots.txt Oficial
+User-agent: *
+Allow: /
+Allow: /data/
+Allow: /?id=*
+Allow: /?sector=*
+Allow: /?departamento=*
+
+# Rastreador oficial de Google para Google for Jobs
+User-agent: Googlebot
+Allow: /
+
+Sitemap: https://chambaperu.vercel.app/sitemap.xml

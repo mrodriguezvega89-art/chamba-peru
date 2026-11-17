@@ -37,5 +37,5 @@ jobs:
         run: |
           git config --local user.email "bot@chambaperu.dev"
           git config --local user.name "ChambaPeru Automation Bot"
-          git add web/public/data/jobs.json
+          git add web/public/data/jobs.json web/public/sitemap.xml web/public/robots.txt
           git diff --staged --quiet || (git commit -m "chore(sync): actualización automática diaria de ofertas" && git push)
