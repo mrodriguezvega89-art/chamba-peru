@@ -1,7 +1,11 @@
 {
   "name": "chamba-peru",
   "private": true,
+  "workspaces": [
+    "web"
+  ],
   "scripts": {
+    "postinstall": "npm --prefix web install",
     "build": "npm --prefix web run build",
     "dev": "npm --prefix web run dev",
     "preview": "npm --prefix web run preview"
