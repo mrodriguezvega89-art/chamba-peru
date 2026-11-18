@@ -164,10 +164,30 @@ export default async function handler(req, res) {
       </html>
     `;
 
+    const textContent = `PORTAL CHAMBA PERU - NUEVA POSTULACION RECIBIDA
+
+Puesto al que postula: ${jobTitle}
+Empresa: ${company}
+
+DATOS DEL CANDIDATO:
+- Nombre: ${name}
+- Telefono / WhatsApp: ${phone || 'No especificado'}
+- Correo electronico: ${email}
+- Fecha y hora de envio: ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}
+- IP verificada: ${clientIp || 'IP Dinamica'}
+
+${message ? `MENSAJE DE PRESENTACION:\n"${message}"\n\n` : ''}
+CURRICULUM VITAE ADJUNTO:
+El archivo de CV (${fileName || 'Curriculum_Vitae.pdf'}) se encuentra adjunto a este correo listo para su descarga y evaluacion.
+
+Para contactar directamente al postulante, puede responder a este correo o escribir a ${email}.
+Este mensaje fue generado automaticamente a traves del Portal Chamba Peru (https://chamba-peru-one.vercel.app).
+`;
+
     // Enviar a través de la API oficial de Brevo (Sendinblue)
     const payload = {
       sender: {
-        name: 'Chamba Perú Postulaciones',
+        name: 'Chamba Peru Postulaciones',
         email: process.env.SENDER_EMAIL || 'chambaperu.notificaciones@gmail.com'
       },
       to: [
@@ -179,15 +199,16 @@ export default async function handler(req, res) {
       bcc: [
         {
           email: adminCopy,
-          name: 'Chamba Perú Admin'
+          name: 'Chamba Peru Admin'
         }
       ],
       replyTo: {
         email: email,
         name: name
       },
-      subject: `[Chamba Perú] Nueva Postulación con CV: ${jobTitle} - ${name} (${company})`,
-      htmlContent: htmlContent
+      subject: `[Chamba Peru] Postulacion con CV: ${jobTitle} - ${name} (${company})`,
+      htmlContent: htmlContent,
+      textContent: textContent
     };
 
     if (fileBase64) {
