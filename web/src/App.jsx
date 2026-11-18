@@ -32,7 +32,9 @@ import {
   AlertCircle,
   Calendar,
   User,
-  Phone
+  Phone,
+  ChevronDown,
+  SlidersHorizontal
 } from 'lucide-react';
 
 // Función para normalizar texto (sin acentos, minúsculas y sin caracteres raros)
@@ -137,6 +139,7 @@ export default function App() {
   const [onlyWithSalary, setOnlyWithSalary] = useState(false);
   const [includePublicSector, setIncludePublicSector] = useState(false); // Por defecto DESACTIVADO: Requiere activar 'Trabajar con el Estado'
   const [onlyActive, setOnlyActive] = useState(true); // Filtro estricto: Solo vacantes vigentes por defecto
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [onlySaved, setOnlySaved] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [highlightedJobId, setHighlightedJobId] = useState(null);
@@ -623,30 +626,26 @@ export default function App() {
         </div>
       </header>
 
-      {/* 2. Hero y Buscador Dual (Inspirado en el diseño oficial de Gemini) */}
-      <section className="bg-gradient-to-b from-[#0B1528] via-[#0D1C34] to-[#0A1322] text-white pt-12 pb-16 px-4 border-b border-slate-800 relative overflow-hidden">
+      {/* 2. Hero y Buscador Dual (Ultra Compacto y Limpio) */}
+      <section className="bg-gradient-to-b from-[#0B1528] via-[#0D1C34] to-[#0A1322] text-white pt-8 pb-7 px-4 border-b border-slate-800 relative overflow-hidden">
         {/* Glows y Luces de Fondo */}
         <div className="absolute -top-20 -left-20 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
+        <div className="max-w-4xl mx-auto text-center space-y-4 relative z-10">
           
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-900/60 text-blue-200 text-xs font-semibold border border-blue-700/50 shadow-inner">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Portal Oficial de Empleos en Perú — 1,700+ vacantes verificadas</span>
-          </div>
-
-          <div className="space-y-3">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-blue-900/50 text-blue-200 text-[11px] font-semibold border border-blue-700/40">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Portal Oficial de Empleos en Perú — 2,200+ vacantes verificadas</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
               ¡Encuentra tu próxima <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-rose-300 to-white">chamba</span> hoy mismo!
             </h1>
-            <p className="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto font-normal">
-              Conectamos el talento peruano con las mejores oportunidades laborales y convocatorias del país.
-            </p>
           </div>
 
           {/* Barra de Búsqueda Dual Estilo Cápsula (Puesto + Ciudad + Botón Rojo "Buscar") */}
-          <div className="pt-2 max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             <div className="flex flex-col sm:flex-row items-center bg-white rounded-2xl sm:rounded-full p-2 shadow-2xl shadow-black/60 border border-slate-200 gap-2 sm:gap-0">
               
               {/* Campo 1: Puesto, palabra clave */}
@@ -656,7 +655,7 @@ export default function App() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Buscar empleo, palabra clave..."
+                  placeholder="Puesto, empresa o palabra clave (ej. cadista, chofer, ventas)..."
                   className="w-full text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none text-sm font-medium"
                 />
                 {searchTerm && (
@@ -676,7 +675,7 @@ export default function App() {
                   type="text"
                   value={selectedLocation === 'ALL' ? '' : selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value || 'ALL')}
-                  placeholder="Ciudad o región (Perú)..."
+                  placeholder="Ciudad o región (ej. Lima, Arequipa, Ica)..."
                   className="w-full text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none text-sm font-medium"
                 />
                 {selectedLocation !== 'ALL' && (
@@ -689,160 +688,201 @@ export default function App() {
               {/* Botón Rojo "Buscar" */}
               <button
                 onClick={() => {
-                  window.scrollTo({ top: 480, behavior: 'smooth' });
+                  window.scrollTo({ top: 380, behavior: 'smooth' });
                 }}
                 className="w-full sm:w-auto px-8 py-3 rounded-xl sm:rounded-full bg-red-600 hover:bg-red-700 text-white font-black text-sm shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
               >
                 Buscar
               </button>
             </div>
-
-            <p className="text-[11px] text-slate-400 text-center pt-3">
-              💡 Busca por profesión, puesto o software: <em>'ing agricola'</em>, <em>'autocad'</em>, <em>'civil 3d'</em>, <em>'ing sistemas'</em>, <em>'s10'</em>, <em>'ing industrial'</em>, <em>'senati'</em>...
-            </p>
           </div>
 
-          {/* Barra de Filtros de Sectores (Chips) */}
-          <div className="pt-2 space-y-3">
+          {/* Filtros Primordiales: Una sola fila limpia y compacta */}
+          <div className="pt-1 space-y-3">
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
-              {sectorList.map((sec) => (
-                <button
-                  key={sec.id}
-                  onClick={() => {
-                    if (sec.id === 'Sector Público') {
-                      setIncludePublicSector(true);
-                    }
-                    setSelectedSector(selectedSector === sec.id ? 'ALL' : sec.id);
-                  }}
-                  className={`px-3 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
-                    selectedSector === sec.id
-                      ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400/50'
-                      : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
-                  }`}
-                >
-                  <span>{sec.icon}</span>
-                  <span>{sec.label}</span>
-                </button>
-              ))}
-            </div>
+              {/* Todas las ofertas */}
+              <button
+                onClick={() => {
+                  setSelectedSector('ALL');
+                  setSelectedSoftware('ALL');
+                  setSelectedLocation('ALL');
+                  setIncludePublicSector(false);
+                }}
+                className={`px-3 py-1 rounded-full font-bold transition-all cursor-pointer ${
+                  selectedSector === 'ALL' && selectedLocation === 'ALL' && selectedSoftware === 'ALL' && !includePublicSector
+                    ? 'bg-red-600 text-white shadow-xs ring-2 ring-red-400/50'
+                    : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                }`}
+              >
+                ✨ Todas
+              </button>
 
-            {/* Barra Especializada: Programas y Software Más Pedidos en Perú */}
-            <div className="bg-slate-900/70 p-2.5 rounded-2xl border border-slate-800/80 max-w-4xl mx-auto">
-              <div className="flex items-center justify-between pb-1.5 px-1">
-                <span className="text-[11px] font-bold text-blue-300 flex items-center gap-1.5">
-                  <span>🛠️</span>
-                  <span>Filtrar por Software y Programas Técnicos:</span>
+              {/* Botón: Convocatorias del Estado */}
+              <button
+                onClick={() => {
+                  const nextVal = !includePublicSector;
+                  setIncludePublicSector(nextVal);
+                  if (nextVal) setSelectedSector('Sector Público');
+                  else if (selectedSector === 'Sector Público') setSelectedSector('ALL');
+                }}
+                className={`px-3 py-1 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  includePublicSector || selectedSector === 'Sector Público'
+                    ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300'
+                    : 'bg-slate-800/80 text-amber-300/90 border border-amber-500/50 hover:bg-amber-950/40 hover:text-white'
+                }`}
+              >
+                <span>🏛️ Estado</span>
+                <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${includePublicSector ? 'bg-slate-950/20 text-slate-950' : 'bg-amber-400/20 text-amber-300'}`}>
+                  {includePublicSector ? 'ON' : 'OFF'}
                 </span>
-                {selectedSoftware !== 'ALL' && (
-                  <button 
-                    onClick={() => setSelectedSoftware('ALL')}
-                    className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
-                  >
-                    Quitar filtro ({selectedSoftware})
-                  </button>
-                )}
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
-                {SOFTWARE_LIST.map((sw) => (
-                  <button
-                    key={sw.id}
-                    onClick={() => setSelectedSoftware(selectedSoftware === sw.id ? 'ALL' : sw.id)}
-                    className={`px-2.5 py-1 rounded-lg font-semibold transition-all flex items-center gap-1 cursor-pointer text-[11px] ${
-                      selectedSoftware === sw.id
-                        ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-300'
-                        : sw.id === 'ALL'
-                        ? 'bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
-                        : 'bg-slate-800/80 text-blue-200 border border-blue-900/50 hover:bg-blue-900/60 hover:text-white'
-                    }`}
-                  >
-                    <span>{sw.icon}</span>
-                    <span>{sw.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+              </button>
 
-            {/* Filtros secundarios: Ubicación rápida y Sueldo */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs">
-              <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Filtro rápido:</span>
+              {/* Lima */}
               <button
                 onClick={() => setSelectedLocation(selectedLocation === 'Lima' ? 'ALL' : 'Lima')}
                 className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
                   selectedLocation === 'Lima' 
                     ? 'bg-red-600 text-white font-bold shadow-xs' 
-                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                    : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
               >
                 📍 Lima
               </button>
+
+              {/* Provincias */}
               <button
                 onClick={() => setSelectedLocation(selectedLocation === 'Provincias' ? 'ALL' : 'Provincias')}
                 className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
                   selectedLocation === 'Provincias' 
                     ? 'bg-red-600 text-white font-bold shadow-xs' 
-                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                    : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
               >
-                🏔️ Provincias / Regiones
+                🏔️ Provincias
               </button>
+
+              {/* Remoto */}
               <button
                 onClick={() => setSelectedLocation(selectedLocation === 'Remoto' ? 'ALL' : 'Remoto')}
                 className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
                   selectedLocation === 'Remoto' 
                     ? 'bg-red-600 text-white font-bold shadow-xs' 
-                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                    : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
               >
                 🌐 Remoto
               </button>
 
-              <span className="text-slate-600 hidden sm:inline">|</span>
-
-              {/* Botón Filtro: Activar Trabajar con el Estado */}
-              <button
-                onClick={() => setIncludePublicSector(!includePublicSector)}
-                className={`px-3.5 py-1 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer text-xs ${
-                  includePublicSector 
-                    ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300' 
-                    : 'bg-slate-800/90 text-amber-300/90 border border-amber-500/50 hover:bg-amber-950/40 hover:text-white'
-                }`}
-                title={includePublicSector ? "Convocatorias del Estado activadas. Clic para ocultar." : "Por defecto desactivado. Clic para activar ofertas del Estado."}
-              >
-                <span>🏛️</span>
-                <span>{includePublicSector ? 'Trabajar con el Estado (Activado)' : 'Activar Trabajar con el Estado'}</span>
-                {includePublicSector ? (
-                  <span className="text-[10px] bg-slate-950/20 px-1.5 py-0.2 rounded-full font-extrabold">ON</span>
-                ) : (
-                  <span className="text-[10px] bg-amber-400/20 text-amber-300 px-1.5 py-0.2 rounded-full border border-amber-400/30">OFF</span>
-                )}
-              </button>
-
-              {/* Botón Filtro Estricto: Solo Vacantes Vigentes */}
+              {/* Solo Vigentes */}
               <button
                 onClick={() => setOnlyActive(!onlyActive)}
                 className={`px-3 py-1 rounded-full font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                   onlyActive 
                     ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs' 
-                    : 'bg-slate-800/90 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                    : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
-                title="Filtrar estrictamente solo convocatorias vigentes y abiertas"
               >
-                <span className={`w-2 h-2 rounded-full ${onlyActive ? 'bg-slate-950 animate-pulse' : 'bg-slate-500'}`}></span>
-                <span>🟢 {onlyActive ? 'Solo Vigentes' : 'Mostrar Todas'}</span>
+                <span className={`w-1.5 h-1.5 rounded-full ${onlyActive ? 'bg-slate-950 animate-pulse' : 'bg-slate-500'}`}></span>
+                <span>🟢 {onlyActive ? 'Solo Vigentes' : 'Todas'}</span>
               </button>
 
+              {/* Con Sueldo */}
               <button
                 onClick={() => setOnlyWithSalary(!onlyWithSalary)}
                 className={`px-3 py-1 rounded-full font-medium transition-all flex items-center gap-1 cursor-pointer ${
                   onlyWithSalary 
                     ? 'bg-emerald-600 text-white font-bold shadow-xs' 
-                    : 'bg-emerald-950/40 text-emerald-300 border border-emerald-700/60 hover:bg-emerald-900/50'
+                    : 'bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
                 }`}
               >
-                <span>💰</span>
-                <span>Solo con Sueldo Visible</span>
+                <span>💰 Con Sueldo</span>
+              </button>
+
+              {/* Botón Plegable: Más Filtros (Sectores y Software) */}
+              <button
+                onClick={() => setShowMoreFilters(!showMoreFilters)}
+                className={`px-3 py-1 rounded-full font-semibold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                  showMoreFilters || selectedSoftware !== 'ALL' || (selectedSector !== 'ALL' && selectedSector !== 'Sector Público')
+                    ? 'bg-blue-600 text-white border-blue-400 shadow-xs' 
+                    : 'bg-slate-800/80 text-blue-300 border-slate-700 hover:bg-slate-700 hover:text-white'
+                }`}
+              >
+                <SlidersHorizontal className="w-3 h-3" />
+                <span>Más Filtros</span>
+                {(selectedSoftware !== 'ALL' || (selectedSector !== 'ALL' && selectedSector !== 'Sector Público')) && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                )}
+                <ChevronDown className={`w-3 h-3 transition-transform ${showMoreFilters ? 'rotate-180' : ''}`} />
               </button>
             </div>
+
+            {/* Panel Plegable Avanzado (Solo visible si el usuario pulsa 'Más Filtros') */}
+            {showMoreFilters && (
+              <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-700/80 max-w-4xl mx-auto space-y-4 text-left shadow-xl animate-in fade-in duration-200">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                    <Filter className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Filtros Específicos por Sector y Programas</span>
+                  </span>
+                  {(selectedSector !== 'ALL' || selectedSoftware !== 'ALL') && (
+                    <button
+                      onClick={() => {
+                        setSelectedSector('ALL');
+                        setSelectedSoftware('ALL');
+                      }}
+                      className="text-[11px] text-rose-400 hover:underline font-semibold cursor-pointer"
+                    >
+                      Limpiar filtros avanzados
+                    </button>
+                  )}
+                </div>
+
+                {/* Sectores */}
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Por Sector o Especialidad:</p>
+                  <div className="flex flex-wrap gap-1.5 text-xs">
+                    {sectorList.map((sec) => (
+                      <button
+                        key={sec.id}
+                        onClick={() => {
+                          if (sec.id === 'Sector Público') setIncludePublicSector(true);
+                          setSelectedSector(selectedSector === sec.id ? 'ALL' : sec.id);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1 cursor-pointer ${
+                          selectedSector === sec.id
+                            ? 'bg-red-600 text-white font-bold'
+                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700/60'
+                        }`}
+                      >
+                        <span>{sec.icon}</span>
+                        <span>{sec.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Software */}
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Por Software o Herramienta:</p>
+                  <div className="flex flex-wrap gap-1.5 text-xs">
+                    {SOFTWARE_LIST.map((sw) => (
+                      <button
+                        key={sw.id}
+                        onClick={() => setSelectedSoftware(selectedSoftware === sw.id ? 'ALL' : sw.id)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1 cursor-pointer ${
+                          selectedSoftware === sw.id
+                            ? 'bg-blue-600 text-white font-bold'
+                            : 'bg-slate-800 text-blue-200 hover:bg-slate-700 border border-slate-700/60'
+                        }`}
+                      >
+                        <span>{sw.icon}</span>
+                        <span>{sw.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
