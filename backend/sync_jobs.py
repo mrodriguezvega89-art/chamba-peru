@@ -13,6 +13,7 @@ from sources.peru_private import get_peru_private_jobs
 from sources.peru_top100 import get_top100_jobs
 from sources.peru_construction import get_construction_realestate_jobs
 from sources.peru_universities_colleges import get_all_universities_and_colleges_jobs
+from sources.peru_mtpe import get_mtpe_jobs
 from sources.remote_apis import get_remote_jobs
 from sources.ats_boards import get_ats_jobs
 from database import save_to_json, sync_to_supabase
@@ -57,6 +58,13 @@ def run_synchronization():
         all_jobs.extend(gov_jobs)
     except Exception as e:
         print(f"[Error] Falló la extracción de portales oficiales del Estado: {e}")
+
+    # 1.1.1 Empleos Perú (MTPE - Ministerio de Trabajo y Promoción del Empleo)
+    try:
+        mtpe_jobs = get_mtpe_jobs(max_jobs=60)
+        all_jobs.extend(mtpe_jobs)
+    except Exception as e:
+        print(f"[Error] Falló la extracción de MTPE Empleos Perú: {e}")
 
     # 1.2 Sector Agrícola, Riego, Programas Técnicos (AutoCAD, Civil 3D, etc.) e Ingenierías Especializadas
     try:
